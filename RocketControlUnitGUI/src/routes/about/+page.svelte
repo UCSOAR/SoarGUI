@@ -11,10 +11,7 @@
            
     onMount(() => {
         PB = new PocketBase("http://127.0.0.1:8090");
-<script lang="ts">
 
-
-</script>
 
         // Subscribe to changes in the 'sensors' collection
         PB.collection('sensors').subscribe('*', function (e) {

@@ -11,23 +11,12 @@
 		storePopup
 	} from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
-	import { storePopup } from '@skeletonlabs/skeleton';
 	import HomeIcon from "$lib/assets/rocket-dark.png";
 	import AboutIcon from "$lib/assets/info-dark.png";
 	import CameraIcon from "$lib/assets/camera-dark.png";
 	import StatsIcon from "$lib/assets/stats-dark.png";
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
-
-	import Navigation from '$lib/navigation/navigation.svelte';
-	import type { HTMLAttributes } from 'svelte/elements';
-
 	import { currentState } from '../store';
-	import HomeIcon from '$lib/assets/rocket-dark.png';
-	import AboutIcon from '$lib/assets/info-dark.png';
-	import CameraIcon from '$lib/assets/camera-dark.png';
-	import StatsIcon from '$lib/assets/stats-dark.png';
-	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
-	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	import { page } from '$app/stores';
 
 	initializeStores();
