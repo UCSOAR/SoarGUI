@@ -22,8 +22,7 @@ class Codec:
         return unencodedSize + 1 + GetCOBSOverhead(unencodedSize + 1) + 1
 
     @staticmethod
-    def Encode(buf, len, msgId): #TODO: Write descriptions ask what msgid refers to
-        
+    def Encode(buf, len, msgId):
         # Make a new buffer encoded with just the message ID and enough space for the checksum
         encodedBuf = bytearray(len+1)
 
@@ -38,7 +37,7 @@ class Codec:
         calc = Calculator(Crc16.CCITT)
         chksum = calc.checksum(encodedBuf)
 
-        #print(f'Calculated checksum: {chksum}')
+        print(f'Calculated checksum: {chksum}')
 
         # Then we append the checksum in little endian order
         encodedBuf.append(chksum & 0xFF)
@@ -54,14 +53,9 @@ class Codec:
         return encodedBuf
 
     @staticmethod
-    def Decode(buf, length):
-
-        #print(buf)
-        #print(f'my buf len: {len(buf)}')
+    def Decode(buf, len):
         # Decode the buffer
         decodedBuf = cobs.decode(buf)
-
-        #print('my len is ' + f'{len(decodedBuf)}')
 
         # Verify the checksum (untested)
         bufChksm = decodedBuf[-2:]
