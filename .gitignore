@@ -1,6 +1,10 @@
 # MacOS
 .DS_Store
 
+# vscode
+.vscode
+*.hushlogin
+
 # Svelte
 node_modules
 /build
@@ -15,6 +19,9 @@ vite.config.ts.timestamp-*
 # Pocketbase
 /database/pb_data
 /database/pocketbase
+
+# Backend
+/backend/logs
 
 # proto
 __pycache__
