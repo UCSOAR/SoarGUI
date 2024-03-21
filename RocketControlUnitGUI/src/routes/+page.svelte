@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { getModalStore, SlideToggle } from '@skeletonlabs/skeleton';
+	import { getModalStore, SlideToggle, modeCurrent } from '@skeletonlabs/skeleton';
 	import type { ModalSettings } from '@skeletonlabs/skeleton';
 	import { currentState } from '../store';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import PocketBase from 'pocketbase';
-	import Background from './background.svelte';
+	import BackgroundDark from './background-dark.svelte';
+	import BackgroundLight from './background-light.svelte';
 
 	const modalStore = getModalStore();
 
@@ -80,6 +81,16 @@
 		currentState.set(state);
 	}
 
+    let BackgroundComponent: any;
+
+    $: {
+        if ($modeCurrent) {
+            BackgroundComponent = BackgroundLight;
+        } else {
+            BackgroundComponent = BackgroundDark;
+        }
+    }
+
 	let containerElement: any;
 
 	onMount(() => {
@@ -129,8 +140,6 @@
 	const continuity2 = writable(undefined);
 	const box1_on = writable(undefined);
 	const box2_on = writable(undefined);
-	const box1_status = writable(undefined);
-	const box2_status = writable(undefined);
 
 	const vent_open = writable(undefined);
 	const drain_open = writable(undefined);
@@ -181,9 +190,6 @@
 
 	$: box1_display = $box1_on === undefined ? 'N/A' : $box1_on ? 'LIVE' : 'DEAD';
 	$: box2_display = $box2_on === undefined ? 'N/A' : $box2_on ? 'LIVE' : 'DEAD';
-
-	$: box1_status_display = $box1_status === undefined ? 'N/A' : $box1_status ? 'LIVE' : 'DEAD';
-	$: box2_status_display = $box2_status === undefined ? 'N/A' : $box2_status ? 'LIVE' : 'DEAD';
 
 	$: vent_display = $vent_open === undefined ? 'N/A' : $vent_open ? 'OPEN' : 'CLOSED';
 	$: drain_display = $drain_open === undefined ? 'N/A' : $drain_open ? 'OPEN' : 'CLOSED';
@@ -348,7 +354,7 @@
 </script>
 
 <div class="container">
-	<Background />
+	<svelte:component this={BackgroundComponent} />
 
 	<div class="ac1_slider">
 		<SlideToggle
@@ -359,6 +365,18 @@
 			on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_AC1', 'RCU_CLOSE_AC1')}
 		>
 			{ac1_display}</SlideToggle
+		>
+	</div>
+
+	<div class="ac2_slider">
+		<SlideToggle
+			name="ac2_slider"
+			active="bg-primary-500 dark:bg-primary-500"
+			size="sm"
+			bind:checked={$ac2_open}
+			on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_AC2', 'RCU_CLOSE_AC2')}
+		>
+			{ac2_display}</SlideToggle
 		>
 	</div>
 
@@ -606,6 +624,14 @@
 		<p>{pv_temperature_display}</p>
 	</div>
 
+	<div class="sob_tc1">
+		<p>{sob_tc1_display}</p>
+	</div>
+
+	<div class="sob_tc2">
+		<p>{sob_tc2_display}</p>
+	</div>
+
 	<!-- Render different buttons based on the current state -->
 	{#if $currentState === states.RS_PRELAUNCH}
 		<button
@@ -691,6 +717,14 @@
 		position: absolute;
 		top: calc(var(--container-width) * 0.025);
 		left: 8.6%;
+		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1900));
+		font-size: 16px;
+	}
+
+	.ac2_slider {
+		position: absolute;
+		top: calc(var(--container-width) * 0.10);
+		left: 80%;
 		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1900));
 		font-size: 16px;
 	}
@@ -939,6 +973,22 @@
 		position: absolute;
 		top: calc(var(--container-width) * 0.345);
 		left: 95.5%;
+		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1500));
+		font-size: 14px;
+	}
+
+	.sob_tc1 {
+		position: absolute;
+		top: calc(var(--container-width) * 0.1405);
+		left: 69%;
+		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1500));
+		font-size: 14px;
+	}
+
+	.sob_tc2 {
+		position: absolute;
+		top: calc(var(--container-width) * 0.179);
+		left: 69%;
 		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1500));
 		font-size: 14px;
 	}
