@@ -167,9 +167,26 @@ Python dependencies are inside the requrements.txt
 
 ## TODO
 
+- General
+  - [ ] Add secrets.ini for db URL
+- RaspberryPi
+  - [ ] Add script to run backend on startup
 - Backend
-  - [ ] Finish Serial Handler
-  - [ ] Finish Database Handler
+  - [x] Finish serial handler
+  - [x] Finish database handler
+  - [ ] Add backend handler thread
+  - [ ] Add loadcell calibration and tare
+  - [ ] Look into overhauling the threading system
+  - [ ] In the backend handler thread add an error
+        handling or a push error to db table.
+  - [ ] In the backend handler we could also have a status
+        table method which can keep track of threads life and
+        other system status information
+  - [ ] Overhaul logging system to allow for using different log levels,
+        switching log levels and having the logs possibly be handled by
+        one thread, maybe not even the backend thread but possibly a different
+        logging thread.
+  - [ ] Update DB URL.
   - [ ] Cython
 - Database
   - [ ] Add BackendCommands Table
