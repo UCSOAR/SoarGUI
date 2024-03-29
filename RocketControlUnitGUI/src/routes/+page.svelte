@@ -28,7 +28,7 @@
 						});
 					}
 					writeStateChange(nextStatePending);
-					nextState(nextStatePending); //TODO: For easy testing before launch remove this line
+					// nextState(nextStatePending); // Uncomment this line to test state transition
 				}
 				nextStatePending = '';
 			}
@@ -334,6 +334,8 @@
 		openCommand: string,
 		closeCommand: string
 	) {
+		e.preventDefault();
+
 		// Determine the command based on the current value of the slider
 		const command = e.target.checked ? openCommand : closeCommand;
 
@@ -345,12 +347,90 @@
 		});
 	}
 
-	async function writeCommandMessage(target: string, command: string) {
-		await PB.collection('CommandMessage').create({
+	async function writeLoadCellCommandMessage(target: string, command: string, weight_kg: number) {
+		await PB.collection('LoadCellCommands').create({
 			target: target,
-			command: command
+			command: command,
+			weight: weight_kg
 		});
 	}
+
+	function confirmRemoveWeight(loadcell: string) {
+		const modal: ModalSettings = {
+			type: 'confirm',
+			title: 'Remove All Weight',
+			response: (r: boolean) => {
+				if (r) {
+					writeLoadCellCommandMessage(loadcell, "CALIBRATE", 0);
+					promptEnterNumberOfWeights(loadcell);
+				} else {
+					writeLoadCellCommandMessage(loadcell, "CANCEL", 0);
+				}
+			}
+		};
+		modalStore.trigger(modal);
+	}
+
+	let numberOfWeights = 0;
+
+	function promptEnterNumberOfWeights(loadcell: string) {
+		const modal: ModalSettings = {
+			type: 'prompt',
+			title: 'Enter number of weights',
+			valueAttr: { type: 'number', required: true },
+			response: async (r: any) => {
+				if (r) {
+					// The modal was confirmed, set the number of weights
+					numberOfWeights = parseInt(r);
+					if (numberOfWeights > 0) {
+						promptEnterWeight(loadcell);
+					}
+				}
+			}
+		};
+		modalStore.trigger(modal);
+	}
+
+	function promptEnterWeight(loadcell: string) {
+		const modal: ModalSettings = {
+			type: 'prompt',
+			title: `Enter Weight (kg) (${numberOfWeights} remaining)`,
+			valueAttr: { type: 'text', required: true },
+			response: async (r: any) => {
+				if (r) {
+					// If this is the last weight, send the finish command
+					if (numberOfWeights === 1) {
+						writeLoadCellCommandMessage(loadcell, "FINISH", parseFloat(r));
+					} else {
+						// The modal was confirmed, send the calibrate command
+						writeLoadCellCommandMessage(loadcell, "CALIBRATE", parseFloat(r));
+					}
+
+					// Decrease the number of weights and open the modal again if there are more weights to enter
+					numberOfWeights--;
+					if (numberOfWeights > 0) {
+						promptEnterWeight(loadcell);
+					}
+				} else {
+					// The modal was cancelled, send a cancel command
+					writeLoadCellCommandMessage(loadcell, "CANCEL", 0);
+				}
+			}
+		};
+		modalStore.trigger(modal);
+	}
+
+	async function performTare(loadcell: string) {
+		writeLoadCellCommandMessage(loadcell, "TARE", 0);
+	}
+
+	// NOTE: This seems odd but since the event will switch these MUST be swapped
+	// Open to alternate ways of doing it. Everything I tried didn't work.
+	async function handleIgnition(e: MouseEvent) {
+		await handleSliderChange(e, 'NODE_RCU', 'RCU_IGNITE_PAD_BOX1', 'RCU_KILL_BOX1');
+		await handleSliderChange(e, 'NODE_RCU', 'RCU_KILL_PAD_BOX2', 'RCU_IGNITE_PAD_BOX2');
+	}
+
 </script>
 
 <div class="container">
@@ -362,7 +442,7 @@
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$ac1_open}
-			on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_AC1', 'RCU_CLOSE_AC1')}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_AC1', 'RCU_CLOSE_AC1')}
 		>
 			{ac1_display}</SlideToggle
 		>
@@ -374,7 +454,7 @@
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$ac2_open}
-			on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_AC2', 'RCU_CLOSE_AC2')}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_AC2', 'RCU_CLOSE_AC2')}
 		>
 			{ac2_display}</SlideToggle
 		>
@@ -386,7 +466,7 @@
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$pbv1_open}
-			on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV1', 'RCU_CLOSE_PBV1')}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV1', 'RCU_CLOSE_PBV1')}
 		>
 			{pbv1_display}</SlideToggle
 		>
@@ -398,7 +478,7 @@
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$pbv2_open}
-			on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV2', 'RCU_CLOSE_PBV2')}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV2', 'RCU_CLOSE_PBV2')}
 		>
 			{pbv2_display}</SlideToggle
 		>
@@ -410,7 +490,7 @@
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$pbv3_open}
-			on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV3', 'RCU_CLOSE_PBV3')}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV3', 'RCU_CLOSE_PBV3')}
 		>
 			{pbv3_display}</SlideToggle
 		>
@@ -422,19 +502,19 @@
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$pbv4_open}
-			on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV4', 'RCU_CLOSE_PBV4')}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV4', 'RCU_CLOSE_PBV4')}
 		>
 			{pbv4_display}</SlideToggle
 		>
 	</div>
-
+	
 	<div class="sol5_slider">
 		<SlideToggle
 			name="sol5_slider"
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$sol5_open}
-			on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL5', 'RCU_CLOSE_SOL5')}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL5', 'RCU_CLOSE_SOL5')}
 		>
 			{sol5_display}</SlideToggle
 		>
@@ -446,7 +526,7 @@
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$sol6_open}
-			on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL6', 'RCU_CLOSE_SOL6')}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL6', 'RCU_CLOSE_SOL6')}
 		>
 			{sol6_display}</SlideToggle
 		>
@@ -458,7 +538,7 @@
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$sol7_open}
-			on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL7', 'RCU_CLOSE_SOL7')}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL7', 'RCU_CLOSE_SOL7')}
 		>
 			{sol7_display}</SlideToggle
 		>
@@ -470,7 +550,7 @@
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$sol8a_open}
-			on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL8A', 'RCU_CLOSE_SOL8A')}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL8A', 'RCU_CLOSE_SOL8A')}
 		>
 			{sol8a_display}</SlideToggle
 		>
@@ -482,7 +562,7 @@
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$sol8b_open}
-			on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL8B', 'RCU_CLOSE_SOL8B')}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL8B', 'RCU_CLOSE_SOL8B')}
 		>
 			{sol8b_display}</SlideToggle
 		>
@@ -494,7 +574,7 @@
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$vent_open}
-			on:change={(e) => handleSliderChange(e, 'NODE_DMB', 'DMB_OPEN_VENT', 'DMB_CLOSE_VENT')}
+			on:click={(e) => handleSliderChange(e, 'NODE_DMB', 'RSC_OPEN_VENT', 'RSC_CLOSE_VENT')}
 		>
 			{vent_display}</SlideToggle
 		>
@@ -506,7 +586,7 @@
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$drain_open}
-			on:change={(e) => handleSliderChange(e, 'NODE_DMB', 'DMB_OPEN_DRAIN', 'DMB_CLOSE_DRAIN')}
+			on:click={(e) => handleSliderChange(e, 'NODE_DMB', 'RSC_OPEN_DRAIN', 'RSC_CLOSE_DRAIN')}
 		>
 			{drain_display}</SlideToggle
 		>
@@ -518,7 +598,7 @@
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
 			bind:checked={$power_source}
-			on:change={(e) =>
+			on:click={(e) =>
 				handleSliderChange(
 					e,
 					'NODE_DMB',
@@ -537,7 +617,7 @@
 				active="bg-primary-500 dark:bg-primary-500"
 				size="sm"
 				bind:checked={$box1_on}
-				on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_KILL_PAD_BOX1', 'RCU_IGNITE_BOX1')}
+				on:click={handleIgnition}
 			>
 				{box1_display}</SlideToggle
 			>
@@ -549,12 +629,78 @@
 				active="bg-primary-500 dark:bg-primary-500"
 				size="sm"
 				bind:checked={$box2_on}
-				on:change={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_KILL_PAD_BOX2', 'RCU_IGNITE_BOX2')}
+				on:click={handleIgnition}
 			>
 				{box2_display}</SlideToggle
 			>
 		</div>
 	{/if}
+
+	<div class="nos1_tare_button">
+		<button 
+			type="button" 
+			class="btn btn-sm variant-filled-secondary" 
+			on:click={() => performTare("NOS1")}
+		>
+			TARE
+		</button>
+	</div>
+
+	<div class="nos1_cal_button">
+		<button 
+			type="button" 
+			class="btn btn-sm variant-filled-error" 
+			on:click={() => {
+				writeLoadCellCommandMessage("NOS1", "CANCEL", 0);
+				confirmRemoveWeight("NOS1");}}
+		>
+			CAL
+		</button>
+	</div>
+
+	<div class="nos2_tare_button">
+		<button 
+			type="button" 
+			class="btn btn-sm variant-filled-secondary" 
+			on:click={() => performTare("NOS2")}
+		>
+			TARE
+		</button>
+	</div>
+
+	<div class="nos2_cal_button">
+		<button 
+			type="button" 
+			class="btn btn-sm variant-filled-error" 
+			on:click={() => {
+				writeLoadCellCommandMessage("NOS2", "CANCEL", 0);	
+				confirmRemoveWeight("NOS2");}}
+		>
+			CAL
+		</button>
+	</div>
+
+	<div class="rail_tare_button">
+		<button 
+			type="button" 
+			class="btn btn-sm variant-filled-secondary" 
+			on:click={() => performTare("LaunchRail")}
+		>
+			TARE
+		</button>
+	</div>
+
+	<div class="rail_cal_button">
+		<button 
+			type="button" 
+			class="btn btn-sm variant-filled-error" 
+			on:click={() => { 
+				writeLoadCellCommandMessage("LaunchRail", "CANCEL", 0);
+				confirmRemoveWeight("LaunchRail");}}
+		>
+			CAL
+		</button>
+	</div>
 
 	<div class="rcu_tc1">
 		<p>{rcu_tc1_display}</p>
@@ -839,6 +985,50 @@
 		left: 12.5%;
 		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1900));
 		font-size: 16px;
+	}
+
+	.nos1_tare_button {
+		position: absolute;
+		top: calc(var(--container-width) * 0.176);
+		left: 11.1%;
+		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1900));
+	}
+
+	.nos1_cal_button {
+		position: absolute;
+		top: calc(var(--container-width) * 0.195);
+		left: 11.0%;
+		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1900));
+	}
+
+	.nos2_tare_button {
+		color: #04AA6D;
+		position: absolute;
+		top: calc(var(--container-width) * 0.246);
+		left: 11.1%;
+		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1900));
+	}
+
+	.nos2_cal_button {
+		color: #04AA6D;
+		position: absolute;
+		top: calc(var(--container-width) * 0.265);
+		left: 11.0%;
+		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1900));
+	}
+	
+	.rail_tare_button {
+		position: absolute;
+		top: calc(var(--container-width) * 0.078);
+		left: 69.1%;
+		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1900));
+	}
+
+	.rail_cal_button {
+		position: absolute;
+		top: calc(var(--container-width) * 0.097);
+		left: 69.1%;
+		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1900));
 	}
 
 	.rcu_tc1 {

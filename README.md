@@ -165,13 +165,25 @@ Python dependencies are inside the requrements.txt
     npm run preview
     ```
 
+  > **_NOTE:_**  For testing state transition locally you must uncomment this line in src/routes/+page.svelte
+
+  ```js
+  nextState(nextStatePending);
+  ```
+
 ## TODO
 
 - General
   - [ ] Add secrets.ini for db URL
+  - [ ] Need to add heartbeat
 - RaspberryPi
   - [ ] Add script to run backend on startup
 - Backend
+  - [ ] Fix PBV4 Proto
+  - [ ] Fix GPS showing NULL
+  - [ ] Fix system state proto
+  - [ ] Fix PBV3 telemetry issue
+  - [ ] Fix launch rail load cell telemetry
   - [x] Finish serial handler
   - [x] Finish database handler
   - [ ] Add backend handler thread
@@ -189,16 +201,16 @@ Python dependencies are inside the requrements.txt
   - [ ] Update DB URL.
   - [ ] Cython
 - Database
-  - [ ] Add BackendCommands Table
+  - [x] Add LoadCellCommands Table
   - [ ] Remove Unused fields
 - Frontend
   - [x] Finish Background Creation
   - [x] Move Components in Place
-  - [ ] Add Loadcell Calibration
+  - [x] Add Loadcell Calibration
   - [ ] Add Fluid Flow Animation
   - [ ] Add Authentication
   - [ ] Add Test State
-  - [ ] Tie Ignitors
+  - [x] Tie Ignitors
   - [ ] Verify Correct State on Refresh
   - [x] Figure Out Deployment
-- [ ] Integration Test
+- [x] Integration Test
