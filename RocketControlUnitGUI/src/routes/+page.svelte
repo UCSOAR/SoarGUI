@@ -4,13 +4,14 @@
 	import { currentState } from '../store';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
+	import type { Writable } from 'svelte/store';
 	import PocketBase from 'pocketbase';
 	import BackgroundDark from './background-dark.svelte';
 	import BackgroundLight from './background-light.svelte';
 
 	const modalStore = getModalStore();
 
-	const PB = new PocketBase('http://127.0.0.1:8090');
+	const PB = new PocketBase('http://192.168.0.69:8090');
 
 	let nextStatePending: string = '';
 	function confirmStateChange(state: string): void {
@@ -18,68 +19,53 @@
 		const modal: ModalSettings = {
 			type: 'confirm',
 			title: 'Please Confirm',
-			body: `Are you sure you wish to proceed to ${state}?`,
+			body: `Are you sure you wish to proceed to ${commandToState[state]}?`,
 			response: (r: boolean) => {
 				if (r) {
 					async function writeStateChange(state: string) {
 						await PB.collection('CommandMessage').create({
 							target: 'NODE_DMB',
-							command: stateCommands[state]
+							command: state
 						});
 					}
 					writeStateChange(nextStatePending);
-					// nextState(nextStatePending); // Uncomment this line to test state transition
 				}
 				nextStatePending = '';
 			}
 		};
 		modalStore.trigger(modal);
 	}
-	const states = {
-		RS_PRELAUNCH: 'Pre-Launch',
-		RS_FILL: 'Fill',
-		RS_ARM: 'Arm',
-		RS_IGNITION: 'Ignition',
-		RS_LAUNCH: 'Launch',
-		RS_BURN: 'Burn',
-		RS_COAST: 'Coast',
-		RS_DESCENT: 'Descent',
-		RS_RECOVERY: 'Recovery',
-		RS_ABORT: 'Abort',
-		RS_TEST: 'Test'
+	
+	function instantStateChange(state: string): void {
+		nextStatePending = state;
+		async function writeStateChange(state: string) {
+			// state string : contains the state to transition to
+			await PB.collection('CommandMessage').create({
+				target: 'NODE_DMB',
+				command: state
+			});
+		}
+		writeStateChange(nextStatePending);
+		nextStatePending = '';
+	}
+
+	const stateToCommand: { [key: string]: string } = {
+		RS_ABORT: 'RSC_ANY_TO_ABORT',
+		RS_PRELAUNCH: 'RSC_GOTO_PRELAUNCH',
+		RS_FILL: "RSC_GOTO_FILL",
+		RS_ARM: "RSC_GOTO_ARM",
+		RS_IGNITION: "RSC_GOTO_IGNITION",
+		RS_LAUNCH: "RSC_IGNITION_TO_LAUNCH",
+		RS_BURN: "RSC_GOTO_BURN",
+		RS_COAST: "RSC_GOTO_COAST",
+		RS_DESCENT: "RSC_GOTO_DESCENT",
+		RS_RECOVERY: "RSC_GOTO_RECOVERY",
+		RS_TEST: "RSC_GOTO_TEST"
 	};
 
-	// Define a type for the keys of the `states` object
-	type StateKey =
-		| 'RS_PRELAUNCH'
-		| 'RS_FILL'
-		| 'RS_ARM'
-		| 'RS_IGNITION'
-		| 'RS_LAUNCH'
-		| 'RS_BURN'
-		| 'RS_COAST'
-		| 'RS_DESCENT'
-		| 'RS_RECOVERY'
-		| 'RS_ABORT'
-		| 'RS_TEST';
-
-	// Use the `StateKey` type to index the `states` object
-	function getStateName(key: StateKey) {
-		return states[key];
-	}
-
-	// Create a reverse mapping of states
-	const stateCommands: Record<string, string> = Object.entries(states).reduce(
-		(acc: Record<string, string>, [key, value]) => {
-			acc[value] = key;
-			return acc;
-		},
-		{}
-	);
-
-	function nextState(state: string) {
-		currentState.set(state);
-	}
+	const commandToState = Object.fromEntries(
+    	Object.entries(stateToCommand).map(([key, value]) => [value, key])
+  	);
 
     let BackgroundComponent: any;
 
@@ -100,7 +86,10 @@
 		const handleResize = () => {
 			if (containerElement) {
 				let containerWidth = containerElement.offsetWidth;
+				let containerHeight = containerElement.offsetHeight;
+
 				document.documentElement.style.setProperty('--container-width', `${containerWidth}px`);
+				document.documentElement.style.setProperty('--container-height', `${containerHeight}px`);
 				document.documentElement.style.setProperty(
 					'--container-width-unitless',
 					`${containerWidth}`
@@ -145,31 +134,31 @@
 	const drain_open = writable(undefined);
 	const mev_open = writable(undefined);
 
-	const rcu_tc1_temperature = writable(undefined);
-	const rcu_tc2_temperature = writable(undefined);
+	const rcu_tc1_temperature: Writable<string | number | undefined> = writable(undefined);
+	const rcu_tc2_temperature: Writable<string | number | undefined> = writable(undefined);
 
 	const battery_voltage = writable(undefined);
 	const power_source = writable(undefined);
 
-	const upper_pv_pressure = writable(undefined);
+	const upper_pv_pressure: Writable<string | number | undefined> = writable(undefined);
 
 	const rocket_mass = writable(undefined);
 
 	const nos1_mass = writable(undefined);
 	const nos2_mass = writable(undefined);
 
-	const ib_pressure = writable(undefined);
-	const lower_pv_pressure = writable(undefined);
+	const ib_pressure: Writable<string | number | undefined> = writable(undefined);
+	const lower_pv_pressure: Writable<string | number | undefined> = writable(undefined);
 
-	const pv_temperature = writable(undefined);
+	const pv_temperature: Writable<string | number | undefined> = writable(undefined);
 
-	const pt1_pressure = writable(undefined);
-	const pt2_pressure = writable(undefined);
-	const pt3_pressure = writable(undefined);
-	const pt4_pressure = writable(undefined);
+	const pt1_pressure: Writable<string | number | undefined> = writable(undefined);
+	const pt2_pressure: Writable<string | number | undefined> = writable(undefined);
+	const pt3_pressure: Writable<string | number | undefined> = writable(undefined);
+	const pt4_pressure: Writable<string | number | undefined> = writable(undefined);
 
-	const sob_tc1_temperature = writable(undefined);
-	const sob_tc2_temperature = writable(undefined);
+	const sob_tc1_temperature: Writable<string | number | undefined> = writable(undefined);
+	const sob_tc2_temperature: Writable<string | number | undefined> = writable(undefined);
 
 	$: ac1_display = $ac1_open === undefined ? 'N/A' : $ac1_open ? 'ON' : 'OFF';
 	$: ac2_display = $ac2_open === undefined ? 'N/A' : $ac2_open ? 'ON' : 'OFF';
@@ -251,8 +240,19 @@
 		// Subscribe to changes in the 'RcuTemp' collection
 		PB.collection('RcuTemperature').subscribe('*', function (e) {
 			// Update the RcuTemp data store whenever a change is detected
-			rcu_tc1_temperature.set(e.record.tc1_temperature);
-			rcu_tc2_temperature.set(e.record.tc2_temperature);
+			if(e.record.tc1_temperature == 9999) {
+				rcu_tc1_temperature.set('DC');
+			}
+			else {
+				rcu_tc1_temperature.set(Math.round(e.record.tc1_temperature/100));
+			}
+
+			if(e.record.tc2_temperature == 9999) {
+				rcu_tc2_temperature.set('DC');
+			}
+			else {
+				rcu_tc2_temperature.set(Math.round(e.record.tc2_temperature/100));
+			}
 		});
 
 		// Subscribe to changes in the 'PadBoxStatus' collection
@@ -274,7 +274,12 @@
 		// Subscribe to changes in the 'DmbPressure' collection
 		PB.collection('DmbPressure').subscribe('*', function (e) {
 			// Update the DmbPressure data store whenever a change is detected
-			upper_pv_pressure.set(e.record.upper_pv_pressure);
+			if (e.record.upper_pv_pressure < -100) {
+				upper_pv_pressure.set('DC');
+			}
+			else {
+				upper_pv_pressure.set(Math.round(e.record.upper_pv_pressure/1000));
+			}
 		});
 
 		// Subscribe to changes in the 'LaunchRailLoadCell' collection
@@ -293,38 +298,82 @@
 		// Subscribe to changes in the 'PbbPressure' collection
 		PB.collection('PbbPressure').subscribe('*', function (e) {
 			// Update the PbbPressure data store whenever a change is detected
-			ib_pressure.set(e.record.ib_pressure);
-			lower_pv_pressure.set(e.record.lower_pv_pressure);
+			if (e.record.ib_pressure < -100) {
+				ib_pressure.set('DC');
+			}
+			else {
+				ib_pressure.set(Math.round(e.record.ib_pressure/1000));
+			}
+			if (e.record.lower_pv_pressure < -100) {
+				lower_pv_pressure.set('DC');
+			}
+			else {
+				lower_pv_pressure.set(Math.round(e.record.lower_pv_pressure/1000));
+			}
 		});
 
 		// Subscribe to changes in the 'PbbTemperature' collection
 		PB.collection('PbbTemperature').subscribe('*', function (e) {
 			// Update the PbbTemperature data store whenever a change is detected
-			pv_temperature.set(e.record.pv_temperature);
+			if(e.record.ib_temperature == 9999) {
+				pv_temperature.set('DC');
+			}
+			else {
+				pv_temperature.set(Math.round(e.record.ib_temperature/100));
+			}
 		});
 
 		// Subscribe to changes in the 'RcuPressure' collection
 		PB.collection('RcuPressure').subscribe('*', function (e) {
 			// Update the RcuPressure data store whenever a change is detected
-			pt1_pressure.set(e.record.pt1_pressure);
-			pt2_pressure.set(e.record.pt2_pressure);
-			pt3_pressure.set(e.record.pt3_pressure);
-			pt4_pressure.set(e.record.pt4_pressure);
+			if(e.record.pt1_pressure <-100) {
+				pt1_pressure.set('DC');
+			}
+			else {
+				pt1_pressure.set(e.record.pt1_pressure);
+			}
+			if(e.record.pt2_pressure <-100) {
+				pt2_pressure.set('DC');
+			}
+			else {
+				pt2_pressure.set(e.record.pt2_pressure);
+			}
+			if(e.record.pt3_pressure <-100) {
+				pt3_pressure.set('DC');
+			}
+			else {
+				pt3_pressure.set(e.record.pt3_pressure);
+			}
+			if(e.record.pt4_pressure <-100) {
+				pt4_pressure.set('DC');
+			}
+			else {
+				pt4_pressure.set(e.record.pt4_pressure);
+			}
 		});
 
 		// Subscribe to changes in the 'SobTemperature' collection
 		PB.collection('SobTemperature').subscribe('*', function (e) {
 			// Update the SobTemperature data store whenever a change is detected
-			sob_tc1_temperature.set(e.record.tc1_temperature);
-			sob_tc2_temperature.set(e.record.tc2_temperature);
+			if(e.record.tc1_temperature == 9999) {
+				sob_tc1_temperature.set('DC');
+			}
+			else {
+				sob_tc1_temperature.set(Math.round(e.record.tc1_temperature/100));
+			}
+
+			if(e.record.tc2_temperature == 9999) {
+				sob_tc2_temperature.set('DC');
+			}
+			else {
+				sob_tc2_temperature.set(Math.round(e.record.tc2_temperature/100));
+			}
 		});
 
-		// Subscribe to changes in the 'SystemState' collection
-		PB.collection('SystemState').subscribe('*', function (e) {
+		// Subscribe to changes in the 'sys_state' collection
+		PB.collection('sys_state').subscribe('*', function (e) {
 			// Update the SystemState data store whenever a change is detected
-
-			const state = e.record.rocket_state;
-			nextState(getStateName(state));
+			currentState.set(e.record.rocket_state);
 		});
 	});
 
@@ -610,7 +659,7 @@
 		>
 	</div>
 
-	{#if $currentState === states.RS_IGNITION}
+	{#if $currentState === "RS_IGNITION"}
 		<div class="box1_slider">
 			<SlideToggle
 				name="box1_slider"
@@ -779,63 +828,92 @@
 	</div>
 
 	<!-- Render different buttons based on the current state -->
-	{#if $currentState === states.RS_PRELAUNCH}
+	{#if $currentState == "RS_PRELAUNCH"}
 		<button
 			class="btn variant-filled-secondary next-state-btn"
-			style="top: calc(var(--container-width) * 0.51);"
-			on:click={() => confirmStateChange(states.RS_FILL)}>Go to Fill</button
+			style="top: calc(var(--container-width) * 0.5);"
+			on:click={() => confirmStateChange("RSC_GOTO_FILL")}>Go to Fill</button
 		>
 		<button
 			class="btn variant-ghost-error next-state-btn"
-			style="top: calc(var(--container-width) * 0.55);"
-			on:click={() => nextState(states.RS_ABORT)}>Go to Abort</button
+			style="top: calc(var(--container-width) * 0.53);"
+			on:click={() => instantStateChange("RSC_ANY_TO_ABORT")}>Go to Abort</button
 		>
-	{:else if $currentState === states.RS_FILL}
+	{:else if $currentState == "RS_FILL"}
 		<button
 			class="btn variant-filled-secondary next-state-btn"
-			style="top: calc(var(--container-width) * 0.51);"
-			on:click={() => confirmStateChange(states.RS_PRELAUNCH)}>Go to Pre-Launch</button
+			style="top: calc(var(--container-width) * 0.5);"
+			on:click={() => confirmStateChange("RSC_GOTO_PRELAUNCH")}>Go to Pre-Launch</button
+		>
+		<button
+		class="btn variant-filled-warning arm_button"
+		style="top: calc(var(--container-width) * 0.47);"
+		on:click={() => instantStateChange("RSC_ARM_CONFIRM_1")}>ARM CONFIRM 1</button
+		>
+		<button
+		class="btn variant-filled-warning arm_button"
+		style="top: calc(var(--container-width) * 0.5);"
+		on:click={() => instantStateChange("RSC_ARM_CONFIRM_2")}>ARM CONFIRM 2</button
 		>
 		<button
 			class="btn variant-filled-secondary next-state-btn"
 			style="top: calc(var(--container-width) * 0.47);"
-			on:click={() => confirmStateChange(states.RS_ARM)}>Go to Arm</button
+			on:click={() => confirmStateChange("RSC_GOTO_ARM")}>Go to Arm</button
 		>
 		<button
 			class="btn variant-ghost-error next-state-btn"
-			style="top: calc(var(--container-width) * 0.55);"
-			on:click={() => nextState(states.RS_ABORT)}>Go to Abort</button
+			style="top: calc(var(--container-width) * 0.53);"
+			on:click={() => instantStateChange("RSC_ANY_TO_ABORT")}>Go to Abort</button
 		>
-	{:else if $currentState === states.RS_ARM}
+	{:else if $currentState == "RS_ARM"}
+		<button
+		class="btn variant-filled-secondary next-state-btn"
+		style="top: calc(var(--container-width) * 0.5);"
+		on:click={() => confirmStateChange("RSC_GOTO_FILL")}>Go to Fill</button
+		>
 		<button
 			class="btn variant-filled-warning next-state-btn"
-			style="top: calc(var(--container-width) * 0.51);"
-			on:click={() => confirmStateChange(states.RS_IGNITION)}>Go to Ignition</button
+			style="top: calc(var(--container-width) * 0.47);"
+			on:click={() => confirmStateChange("RSC_GOTO_IGNITION")}>Go to Ignition</button
 		>
 		<button
 			class="btn variant-ghost-error next-state-btn"
-			style="top: calc(var(--container-width) * 0.55);"
-			on:click={() => nextState(states.RS_ABORT)}>Go to Abort</button
+			style="top: calc(var(--container-width) * 0.53);"
+			on:click={() => instantStateChange("RSC_ANY_TO_ABORT")}>Go to Abort</button
 		>
-	{:else if $currentState === states.RS_IGNITION}
+	{:else if $currentState == "RS_IGNITION"}
 		<button
 			class="btn variant-filled-error next-state-btn"
-			style="top: calc(var(--container-width) * 0.51);"
-			on:click={() => nextState(states.RS_LAUNCH)}>LAUNCH</button
+			style="top: calc(var(--container-width) * 0.47);"
+			on:click={() => instantStateChange("RSC_IGNITION_TO_LAUNCH")}>LAUNCH</button
+		>
+		<button
+		class="btn variant-filled-secondary next-state-btn"
+		style="top: calc(var(--container-width) * 0.5);"
+		on:click={() => confirmStateChange("RSC_GOTO_ARM")}>Go to Arm</button
 		>
 		<button
 			class="btn variant-ghost-error next-state-btn"
-			style="top: calc(var(--container-width) * 0.55);"
-			on:click={() => nextState(states.RS_ABORT)}>Go to Abort</button
+			style="top: calc(var(--container-width) * 0.53);"
+			on:click={() => instantStateChange("RSC_ANY_TO_ABORT")}>Go to Abort</button
 		>
-	{:else if $currentState === states.RS_ABORT}
+		<button
+		class="btn variant-filled-secondary arm_button"
+		style="top: calc(var(--container-width) * 0.53);"
+		on:click={() => confirmStateChange("RSC_GOTO_PRELAUNCH")}>Go to Pre-Launch</button
+		>
+	{:else if $currentState == "RS_ABORT"}
 		<button
 			class="btn variant-filled-secondary next-state-btn"
-			style="top: calc(var(--container-width) * 0.55);"
-			on:click={() => confirmStateChange(states.RS_PRELAUNCH)}>Go to Pre-Launch</button
+			style="top: calc(var(--container-width) * 0.53);"
+			on:click={() => confirmStateChange("RSC_GOTO_PRELAUNCH")}>Go to Pre-Launch</button
 		>
-	{:else if $currentState === states.RS_LAUNCH}
-		<h1>nice rocket bro</h1>
+	{:else if $currentState == "RS_RECOVERY"}
+		<button
+			class="btn variant-filled-secondary next-state-btn"
+			style="top: calc(var(--container-width) * 0.53);"
+			on:click={() => instantStateChange("RSC_ANY_TO_ABORT")}>Go to Abort</button
+		>
 	{/if}
 </div>
 
@@ -856,7 +934,14 @@
 		position: absolute;
 		left: 8%;
 		width: 200px;
-		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1400));
+		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1600));
+	}
+
+	.arm_button {
+		position: absolute;
+		left: 21%;
+		width: 200px;
+		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1600));
 	}
 
 	.ac1_slider {
