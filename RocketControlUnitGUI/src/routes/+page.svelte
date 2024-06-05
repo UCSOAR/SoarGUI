@@ -225,9 +225,6 @@
 	$: sol8a_display = $sol8a_open === undefined ? 'N/A' : $sol8a_open ? 'OPEN' : 'CLOSE';
 	$: sol8b_display = $sol8b_open === undefined ? 'N/A' : $sol8b_open ? 'OPEN' : 'CLOSE';
 
-	$: continuity1_display = $continuity1 === undefined ? 'N/A' : $continuity1;
-	$: continuity2_display = $continuity2 === undefined ? 'N/A' : $continuity2;
-
 	$: box1_display = $box1_on === undefined ? 'N/A' : $box1_on ? 'LIVE' : 'DEAD';
 	$: box2_display = $box2_on === undefined ? 'N/A' : $box2_on ? 'LIVE' : 'DEAD';
 
@@ -903,12 +900,10 @@
 		<p>{pt4_pressure_display}</p>
 	</div>
 
-	<div class="box1_continuity pad_box_status {padBoxStatusOutdated ? 'outdated' : ''}">
-		<p>{continuity1_display}</p>
+	<div class="box1_continuity">
 	</div>
 
-	<div class="box2_continuity pad_box_status {padBoxStatusOutdated ? 'outdated' : ''}">
-		<p>{continuity2_display}</p>
+	<div class="box2_continuity">
 	</div>
 
 	<div class="mev_status combustion_control_status {combustionControlStatusOutdated ? 'outdated' : ''}">
@@ -1317,6 +1312,10 @@
 		left: 14.7%;
 		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1500));
 		font-size: 14px;
+		width: 1em;
+		height: 1em;
+		background-color: green;
+		border-radius: 10%;
 	}
 
 	.box2_continuity {
@@ -1325,6 +1324,10 @@
 		left: 14.7%;
 		transform: translate(-50%, -50%) scale(calc(var(--container-width-unitless) / 1500));
 		font-size: 14px;
+		width: 1em;
+		height: 1em;
+		background-color: green;
+		border-radius: 10%;
 	}
 
 	.mev_status {
