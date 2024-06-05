@@ -410,6 +410,43 @@
 		});
 	}
 
+	let wasLiveAtAnyPoint = false;
+
+	async function pollIgnitors() {
+		if (box1_display === 'LIVE' || box2_display === 'LIVE') {
+			wasLiveAtAnyPoint = true;
+		}
+	}
+
+	async function handleLaunchSequence() {
+		await PB.collection('CommandMessage').create({
+			target: 'NODE_RCU',
+			command: 'RCU_IGNITE_PAD_BOX1'
+		});
+
+		await PB.collection('CommandMessage').create({
+			target: 'NODE_RCU',
+			command: 'RCU_IGNITE_PAD_BOX2'
+		});
+
+		const pollInterval = setInterval(pollIgnitors, 100);
+
+		await new Promise(resolve => setTimeout(resolve, 3500));
+
+		clearInterval(pollInterval);
+
+		if (wasLiveAtAnyPoint) {
+			for (let i = 0; i < 3; i++) {
+				await PB.collection('CommandMessage').create({
+					target: 'NODE_DMB',
+					command: 'RSC_IGNITION_TO_LAUNCH'
+				});
+				await new Promise(resolve => setTimeout(resolve, 100));
+			} 
+		}
+		wasLiveAtAnyPoint = false;
+	}
+
 	async function writeLoadCellCommandMessage(target: string, command: string, weight_kg: number) {
 		await PB.collection('LoadCellCommands').create({
 			target: target,
@@ -684,6 +721,7 @@
 				size="sm"
 				bind:checked={$box1_on}
 				on:click={handleIgnition}
+				disabled={$currentState === "RS_IGNITION"}
 			>
 				{box1_display}</SlideToggle
 			>
@@ -696,6 +734,7 @@
 				size="sm"
 				bind:checked={$box2_on}
 				on:click={handleIgnition}
+				disabled={$currentState === "RS_IGNITION"}
 			>
 				{box2_display}</SlideToggle
 			>
@@ -902,22 +941,12 @@
 		<button
 			class="btn variant-filled-error next-state-btn"
 			style="top: calc(var(--container-width) * 0.47);"
-			on:click={() => instantStateChange("RSC_IGNITION_TO_LAUNCH")}>LAUNCH</button
+			on:click={() => handleLaunchSequence()}>LAUNCH</button
 		>
 		<button
 		class="btn variant-filled-secondary next-state-btn"
 		style="top: calc(var(--container-width) * 0.5);"
 		on:click={() => confirmStateChange("RSC_GOTO_ARM")}>Go to Arm</button
-		>
-		<button
-			class="btn variant-ghost-error next-state-btn"
-			style="top: calc(var(--container-width) * 0.53);"
-			on:click={() => instantStateChange("RSC_ANY_TO_ABORT")}>Go to Abort</button
-		>
-		<button
-		class="btn variant-filled-secondary arm_button"
-		style="top: calc(var(--container-width) * 0.53);"
-		on:click={() => confirmStateChange("RSC_GOTO_PRELAUNCH")}>Go to Pre-Launch</button
 		>
 	{:else if $currentState == "RS_ABORT"}
 		<button
