@@ -8,20 +8,20 @@
 	import PocketBase from 'pocketbase';
 	import BackgroundDark from './background-dark.svelte';
 	import BackgroundLight from './background-light.svelte';
+	import { auth } from '../store';
 
 	const modalStore = getModalStore();
 
 	const PB = new PocketBase('http://192.168.0.69:8090');
 	
 	PB.authStore.clear();
-	let auth = false;
 
 	onMount(async () => {
 		const email = import.meta.env.VITE_EMAIL;
 		const password = import.meta.env.VITE_PASSWORD;
 		if (email && password) {
 			await PB.admins.authWithPassword(email, password);
-			auth = true;
+			$auth = true;
 		}
 	});
 
@@ -163,7 +163,7 @@
     let intervalId: any;
 
     onMount(() => {
-		if (auth === true) {
+		if ($auth === true) {
 			intervalId = setInterval(async () => {
 				await PB.collection('Heartbeat').create({
 					message: 'heartbeat'
