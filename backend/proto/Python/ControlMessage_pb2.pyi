@@ -7,7 +7,7 @@ from typing import ClassVar as _ClassVar, Mapping as _Mapping, Optional as _Opti
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class ControlMessage(_message.Message):
-    __slots__ = ("source", "target", "source_sequence_num", "ack", "nack", "ping", "hb", "sys_state", "sys_ctrl")
+    __slots__ = ("source", "target", "source_sequence_num", "ack", "nack", "ping", "hb", "sys_state", "sys_ctrl", "hb_state")
     SOURCE_FIELD_NUMBER: _ClassVar[int]
     TARGET_FIELD_NUMBER: _ClassVar[int]
     SOURCE_SEQUENCE_NUM_FIELD_NUMBER: _ClassVar[int]
@@ -17,6 +17,7 @@ class ControlMessage(_message.Message):
     HB_FIELD_NUMBER: _ClassVar[int]
     SYS_STATE_FIELD_NUMBER: _ClassVar[int]
     SYS_CTRL_FIELD_NUMBER: _ClassVar[int]
+    HB_STATE_FIELD_NUMBER: _ClassVar[int]
     source: _CoreProto_pb2.Node
     target: _CoreProto_pb2.Node
     source_sequence_num: int
@@ -26,7 +27,8 @@ class ControlMessage(_message.Message):
     hb: Heartbeat
     sys_state: SystemState
     sys_ctrl: SystemControl
-    def __init__(self, source: _Optional[_Union[_CoreProto_pb2.Node, str]] = ..., target: _Optional[_Union[_CoreProto_pb2.Node, str]] = ..., source_sequence_num: _Optional[int] = ..., ack: _Optional[_Union[AckNack, _Mapping]] = ..., nack: _Optional[_Union[AckNack, _Mapping]] = ..., ping: _Optional[_Union[Ping, _Mapping]] = ..., hb: _Optional[_Union[Heartbeat, _Mapping]] = ..., sys_state: _Optional[_Union[SystemState, _Mapping]] = ..., sys_ctrl: _Optional[_Union[SystemControl, _Mapping]] = ...) -> None: ...
+    hb_state: HeartbeatState
+    def __init__(self, source: _Optional[_Union[_CoreProto_pb2.Node, str]] = ..., target: _Optional[_Union[_CoreProto_pb2.Node, str]] = ..., source_sequence_num: _Optional[int] = ..., ack: _Optional[_Union[AckNack, _Mapping]] = ..., nack: _Optional[_Union[AckNack, _Mapping]] = ..., ping: _Optional[_Union[Ping, _Mapping]] = ..., hb: _Optional[_Union[Heartbeat, _Mapping]] = ..., sys_state: _Optional[_Union[SystemState, _Mapping]] = ..., sys_ctrl: _Optional[_Union[SystemControl, _Mapping]] = ..., hb_state: _Optional[_Union[HeartbeatState, _Mapping]] = ...) -> None: ...
 
 class AckNack(_message.Message):
     __slots__ = ("acking_msg_source", "acking_msg_id", "acking_sequence_num")
@@ -105,3 +107,23 @@ class SystemControl(_message.Message):
     sys_cmd: SystemControl.Command
     cmd_param: int
     def __init__(self, sys_cmd: _Optional[_Union[SystemControl.Command, str]] = ..., cmd_param: _Optional[int] = ...) -> None: ...
+
+class HeartbeatState(_message.Message):
+    __slots__ = ("timer_state", "timer_period", "timer_remaining")
+    class TimerState(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+        __slots__ = ()
+        UNINITIALIZED: _ClassVar[HeartbeatState.TimerState]
+        COUNTING: _ClassVar[HeartbeatState.TimerState]
+        PAUSED: _ClassVar[HeartbeatState.TimerState]
+        COMPLETE: _ClassVar[HeartbeatState.TimerState]
+    UNINITIALIZED: HeartbeatState.TimerState
+    COUNTING: HeartbeatState.TimerState
+    PAUSED: HeartbeatState.TimerState
+    COMPLETE: HeartbeatState.TimerState
+    TIMER_STATE_FIELD_NUMBER: _ClassVar[int]
+    TIMER_PERIOD_FIELD_NUMBER: _ClassVar[int]
+    TIMER_REMAINING_FIELD_NUMBER: _ClassVar[int]
+    timer_state: HeartbeatState.TimerState
+    timer_period: int
+    timer_remaining: int
+    def __init__(self, timer_state: _Optional[_Union[HeartbeatState.TimerState, str]] = ..., timer_period: _Optional[int] = ..., timer_remaining: _Optional[int] = ...) -> None: ...
