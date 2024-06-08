@@ -816,7 +816,7 @@
 		>
 	</div>
 
-	{#if $currentState === "RS_IGNITION" || $currentState ==="RS_TEST"}
+	{#if $currentState === "RS_IGNITION" || $currentState === "RS_TEST" || $currentState === "RS_ABORT" || $currentState === "RS_LAUNCH" || $currentState === "RS_BURN" || $currentState === "RS_COAST" || $currentState === "RS_RECOVERY"}
 		<div class="box1_slider">
 			<SlideToggle
 				name="box1_slider"
@@ -824,7 +824,7 @@
 				size="sm"
 				bind:checked={$box1_on}
 				on:click={handleIgnition}
-				disabled={$currentState === "RS_IGNITION"}
+				disabled={$currentState === "RS_IGNITION" || "RS_ABORT" || "RS_LAUNCH" || "RS_BURN" || "RS_COAST" || "RS_RECOVERY"}
 			>
 				{box1_display}</SlideToggle
 			>
