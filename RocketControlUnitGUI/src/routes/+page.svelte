@@ -807,7 +807,7 @@
 				size="sm"
 				bind:checked={$box1_on}
 				on:click={handleIgnition}
-				disabled={$currentState === "RS_IGNITION" || "RS_ABORT" || "RS_LAUNCH" || "RS_BURN" || "RS_COAST" || "RS_RECOVERY"}
+				disabled={$currentState === "RS_IGNITION" || $currentState === "RS_ABORT" || $currentState === "RS_LAUNCH" || $currentState === "RS_BURN" || $currentState === "RS_COAST" || $currentState === "RS_RECOVERY"}
 			>
 				{box1_display}</SlideToggle
 			>
@@ -820,7 +820,7 @@
 				size="sm"
 				bind:checked={$box2_on}
 				on:click={handleIgnition}
-				disabled={$currentState === "RS_IGNITION"}
+				disabled={$currentState === "RS_IGNITION" || $currentState === "RS_ABORT" || $currentState === "RS_LAUNCH" || $currentState === "RS_BURN" || $currentState === "RS_COAST" || $currentState === "RS_RECOVERY"}
 			>
 				{box2_display}</SlideToggle
 			>
