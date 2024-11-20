@@ -65,7 +65,7 @@
 		system_state,
 		timer_state,
 		timer_period,
-		timer_remaining
+		timer_remaining,
 		fcb_status,
 		pbb_status,
 		daq_status,
