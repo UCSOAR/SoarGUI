@@ -7,7 +7,8 @@
 	import { useInteraction } from '$lib/hooks/useInteraction';
 	import { onMount } from 'svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
-
+	import {fetchPermission, getDecryption} from "$lib/message"
+	
 	const timestamps = initTimestamps();
 	const stores = initStores();
 	const usePocketbaseHook = usePocketbase(timestamps, stores);
@@ -25,7 +26,7 @@
 	const {
 		confirmStateChange,
 		instantStateChange,
-		resumeConfirmRemoveWeight
+		confirmRemoveWeight
 	} = useInteractionHook;
 
 	// Destructure stores for later use
@@ -68,9 +69,9 @@
 		timer_remaining
 	} = stores;
 	
+	
 	onMount(() => {
 		let heartbeatInterval: NodeJS.Timeout;
-
 		// Handle pocketbase authentication
 		const handleAuth = async () => {
 			$auth = await authenticate();
@@ -137,6 +138,7 @@
 
 			window.removeEventListener('resize', handleResize);
 		};
+
 	});
 
 	$: ac1_display = $ac1_open === undefined ? 'N/A' : $ac1_open ? 'ON' : 'OFF';
@@ -463,7 +465,7 @@
 			class="btn btn-sm variant-filled-error" 
 			on:click={() => {
 				writeLoadCellCommand("NOS1", "CANCEL", 0);
-				resumeConfirmRemoveWeight("NOS1");}}
+				confirmRemoveWeight("NOS1");}}
 		>
 			CAL
 		</button>
@@ -485,7 +487,7 @@
 			class="btn btn-sm variant-filled-error" 
 			on:click={() => {
 				writeLoadCellCommand("NOS2", "CANCEL", 0);	
-				resumeConfirmRemoveWeight("NOS2");}}
+				confirmRemoveWeight("NOS2");}}
 		>
 			CAL
 		</button>
@@ -507,7 +509,7 @@
 			class="btn btn-sm variant-filled-error" 
 			on:click={() => { 
 				writeLoadCellCommand("LAUNCHRAIL", "CANCEL", 0);
-				resumeConfirmRemoveWeight("LAUNCHRAIL");}}
+				confirmRemoveWeight("LAUNCHRAIL");}}
 		>
 			CAL
 		</button>
@@ -604,7 +606,7 @@
 	</div>
 
 	<!-- Render different buttons based on the current state -->
-	{#if $currentState == "RS_PRELAUNCH"}
+	{#if $currentState == "RS_PRELAUNCH" } 
 		<button
 			class="btn variant-filled-secondary next-state-btn"
 			style="top: calc(var(--container-width) * 0.5);"

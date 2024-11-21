@@ -1,27 +1,25 @@
 import PocketBase from 'pocketbase';
 import type { Timestamps } from '../timestamps';
 import type { Stores } from '../stores';
-import { currentState } from '../stores';
+import {fetchPermission, fetchEmail, fetchPassword, getDecryption} from '$lib/message';
 
 export type PocketbaseHook = ReturnType<typeof usePocketbase>;
 
 export const usePocketbase = (timestamps: Timestamps, stores: Stores) => {
-	const pocketbase = new PocketBase('http://192.168.0.69:8090');
+	const pocketbase = new PocketBase('http://localhost:8090');
 
 	const authenticate = async () => {
-		const email = import.meta.env.VITE_EMAIL;
-		const password = import.meta.env.VITE_PASSWORD;
-
+		const email = await getDecryption(await fetchEmail());
+		const password = await getDecryption(await fetchPassword());
+		
 		if (email && password) {
 			pocketbase.authStore.clear();
 			await pocketbase.admins.authWithPassword(email, password);
-
 			return true;
-		}
-
+		} 
 		return false;
 	};
-
+                      
 	const sendHeartbeat = async () => {
 		await pocketbase.collection('Heartbeat').create({
 			message: 'heartbeat'
@@ -29,10 +27,17 @@ export const usePocketbase = (timestamps: Timestamps, stores: Stores) => {
 	};
 
 	const writeStateChange = async (state: string) => {
-		await pocketbase.collection('CommandMessage').create({
-			target: 'NODE_DMB',
-			command: state
-		});
+		if(await getDecryption(await fetchPermission()) == "MasterKey"){
+			await pocketbase.collection('CommandMessage').create({
+				target: 'NODE_DMB',
+				command: state
+			});
+		}
+		if(await getDecryption(await fetchPermission()) == "TesterKey"){	
+			//pass
+			//permission to change states is denied,
+			//writeStateChange will not be reassigned, state will not be changed
+		}
 	};
 
 	const writeCommandMessage = async (target: string, command: string) => {
@@ -175,7 +180,6 @@ export const usePocketbase = (timestamps: Timestamps, stores: Stores) => {
 		// Subscribe to changes in the 'sys_state' collection
 		pocketbase.collection('sys_state').subscribe('*', (e) => {
 			stores.system_state.set(e.record.sys_state);
-			currentState.set(e.record.rocket_state);
 			timestamps.sys_state = Date.now();
 		});
 
