@@ -107,8 +107,10 @@ def read_files_from_usb(usb_path):
                     print(f"\nReading file: {file_path}")
                     with open(file_path, 'r', encoding='utf-8') as f:
                         file_content = f.readlines() 
-                        return file_content
-                       
+                        res =[]
+                        for sub in file_content:
+                            res.append(sub.replace("\n", ""))
+                        return res
     except Exception as e:
         print(f"Error reading files: {e}")
 

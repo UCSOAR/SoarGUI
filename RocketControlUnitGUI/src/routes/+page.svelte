@@ -72,6 +72,7 @@
 	
 	onMount(() => {
 		let heartbeatInterval: NodeJS.Timeout;
+		$currentState = "RS_PRELAUNCH"
 		// Handle pocketbase authentication
 		const handleAuth = async () => {
 			$auth = await authenticate();

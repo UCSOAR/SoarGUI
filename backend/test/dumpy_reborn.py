@@ -4,8 +4,8 @@ import random
 import concurrent.futures
 
 endpoint = "http://localhost:8090"
-admin_email = "test@test.test"
-admin_password = "123456789a"
+admin_email = "random@random.com"
+admin_password = "testtest123"
 
 # Initialize PocketBase
 pb = PocketBase(endpoint)
