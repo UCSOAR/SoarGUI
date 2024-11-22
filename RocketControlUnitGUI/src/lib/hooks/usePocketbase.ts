@@ -1,7 +1,7 @@
 import PocketBase from 'pocketbase';
 import type { Timestamps } from '../timestamps';
 import type { Stores } from '../stores';
-import {fetchPermission, fetchEmail, fetchPassword, getDecryption} from '$lib/message';
+import {fetchPermission, fetchEmail, fetchPassword, getDecryption} from '../message';
 
 export type PocketbaseHook = ReturnType<typeof usePocketbase>;
 
