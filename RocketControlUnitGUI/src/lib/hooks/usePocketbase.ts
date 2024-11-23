@@ -1,20 +1,26 @@
 import PocketBase from 'pocketbase';
 import type { Timestamps } from '../timestamps';
-import type { Stores } from '../stores';
-import { currentState } from '../stores';
+import { currentState, type Stores } from '../stores';
+import { fetchUsbMessage, decryptMessage } from '../message';
 
 export type PocketbaseHook = ReturnType<typeof usePocketbase>;
 
 export const usePocketbase = (timestamps: Timestamps, stores: Stores) => {
-	const pocketbase = new PocketBase('http://192.168.0.69:8090');
+	const pocketbase = new PocketBase('http://localhost:8090');
+
+	const usbMessagePromise = fetchUsbMessage();
 
 	const authenticate = async () => {
-		const email = import.meta.env.VITE_EMAIL;
-		const password = import.meta.env.VITE_PASSWORD;
+		const usbMessage = await usbMessagePromise;
 
-		if (email && password) {
+		if (usbMessage) {
+			const { email, password } = usbMessage;
+
+			const decryptedEmail = decryptMessage(email);
+			const decryptedPassword = decryptMessage(password);
+
 			pocketbase.authStore.clear();
-			await pocketbase.admins.authWithPassword(email, password);
+			await pocketbase.admins.authWithPassword(decryptedEmail, decryptedPassword);
 
 			return true;
 		}
@@ -29,10 +35,18 @@ export const usePocketbase = (timestamps: Timestamps, stores: Stores) => {
 	};
 
 	const writeStateChange = async (state: string) => {
-		await pocketbase.collection('CommandMessage').create({
-			target: 'NODE_DMB',
-			command: state
-		});
+		const usbMessage = await usbMessagePromise;
+
+		if (!usbMessage) {
+			return;
+		}
+
+		if (decryptMessage(usbMessage.permission) == 'MasterKey') {
+			await pocketbase.collection('CommandMessage').create({
+				target: 'NODE_DMB',
+				command: state
+			});
+		}
 	};
 
 	const writeCommandMessage = async (target: string, command: string) => {

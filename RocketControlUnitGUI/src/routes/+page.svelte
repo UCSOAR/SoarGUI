@@ -68,6 +68,7 @@
 		timer_remaining
 	} = stores;
 	
+	
 	onMount(() => {
 		let heartbeatInterval: NodeJS.Timeout;
 
@@ -137,6 +138,7 @@
 
 			window.removeEventListener('resize', handleResize);
 		};
+
 	});
 
 	$: ac1_display = $ac1_open === undefined ? 'N/A' : $ac1_open ? 'ON' : 'OFF';
@@ -604,7 +606,7 @@
 	</div>
 
 	<!-- Render different buttons based on the current state -->
-	{#if $currentState == "RS_PRELAUNCH"}
+	{#if $currentState == "RS_PRELAUNCH" } 
 		<button
 			class="btn variant-filled-secondary next-state-btn"
 			style="top: calc(var(--container-width) * 0.5);"
