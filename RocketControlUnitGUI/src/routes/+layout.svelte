@@ -2,7 +2,7 @@
 	import '../styles/app.postcss';
 	import ReadOnlySvg from '$lib/components/ReadOnlySvg.svelte';
 	import { ThemeData, ThemeType } from '$lib/theme';
-	import { auth, currentState } from "$lib/stores";
+	import { auth, currentState, miniRcu } from "$lib/stores";
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { page } from '$app/stores';
 	import {
@@ -57,23 +57,25 @@
 	</svelte:fragment>
 	
 	<svelte:fragment slot="sidebarLeft">
-		<AppRail>
-			<AppRailAnchor hover="bg-primary-hover-token" href="/" selected={$page.url.pathname === '/'}>
-				<img src="/icons/rocket.png" class="sideBar-center" alt="Icon" />
-			</AppRailAnchor>
-			
-			<AppRailAnchor href="/data" selected={$page.url.pathname === "/data"}>
-				<img src="/icons/stats.png" class="sideBar-center" alt="Icon" />
-			</AppRailAnchor>
-			
-			<AppRailAnchor href="/live-feed" selected={$page.url.pathname === "/live-feed"}>
-				<img src="/icons/camera.png" class="sideBar-center" alt="Icon" />
-			</AppRailAnchor>
-			
-			<AppRailAnchor href="/about" selected={$page.url.pathname === "/about"}>
-				<img src="/icons/info.png" class="sideBar-center" alt="Icon" />
-			</AppRailAnchor>
-		</AppRail>
+		{#if !$miniRcu}
+			<AppRail>
+				<AppRailAnchor hover="bg-primary-hover-token" href="/" selected={$page.url.pathname === '/'}>
+					<img src="/icons/rocket.png" class="sideBar-center" alt="Icon" />
+				</AppRailAnchor>
+				
+				<AppRailAnchor href="/data" selected={$page.url.pathname === "/data"}>
+					<img src="/icons/stats.png" class="sideBar-center" alt="Icon" />
+				</AppRailAnchor>
+				
+				<AppRailAnchor href="/live-feed" selected={$page.url.pathname === "/live-feed"}>
+					<img src="/icons/camera.png" class="sideBar-center" alt="Icon" />
+				</AppRailAnchor>
+				
+				<AppRailAnchor href="/about" selected={$page.url.pathname === "/about"}>
+					<img src="/icons/info.png" class="sideBar-center" alt="Icon" />
+				</AppRailAnchor>
+			</AppRail>
+		{/if}
 	</svelte:fragment>
 	
 	<slot>Some Slot</slot>

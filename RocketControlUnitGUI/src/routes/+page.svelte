@@ -3,7 +3,7 @@
 	import Diagram from '$lib/components/Diagram.svelte';
 	import { initTimestamps, type Timestamps } from '$lib/timestamps';
 	import { usePocketbase } from '$lib/hooks/usePocketbase';
-	import { initStores, auth, currentState } from '$lib/stores';
+	import { initStores, auth, currentState, miniRcu } from '$lib/stores';
 	import { useInteraction } from '$lib/hooks/useInteraction';
 	import { onMount } from 'svelte';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
@@ -25,7 +25,8 @@
 	const {
 		confirmStateChange,
 		instantStateChange,
-		resumeConfirmRemoveWeight
+		resumeConfirmRemoveWeight,
+		confirmationModal
 	} = useInteractionHook;
 
 	// Destructure stores for later use
@@ -208,11 +209,20 @@
 	const handleSliderChange = async (e: any, target: string, openCommand: string, closeCommand: string) => {
 		e.preventDefault();
 
-		// Determine the command based on the current value of the slider
-		const command = e.target.checked ? openCommand : closeCommand;
+		const slideChangeCallback = () => {
+			// Determine the command based on the current value of the slider
+			const command = e.target.checked ? openCommand : closeCommand;
 
-		// Create a change on the 'RelayStatus' collection
-		writeArbitraryCommand(target, command);
+			// Create a change on the 'RelayStatus' collection
+			writeArbitraryCommand(target, command);
+		}
+
+		if (miniRcu) {
+			confirmationModal("Confirm Action", slideChangeCallback);
+		}
+		else {
+			slideChangeCallback();
+		}
 	}
 
 	let wasLiveAtAnyPoint = false;
