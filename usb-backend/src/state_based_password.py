@@ -10,25 +10,10 @@ app = Flask(__name__)
 #allowing 'GET'
 cors = CORS(app, methods=['GET', 'POST'])
 
-#this acquires the name of the usb we are looking for
-def get_name_macos():
-
-    os.chdir('/Volumes')
-    List = os.listdir()
-    i = 0
-    while i < len(List):
-        if (List[i] == 'Macintosh HD'):
-            del List[i:i+1]
-            continue
-        else:
-            if List[i] == "MASTER" or List[i] == "TESTER":
-                return List[i]
-            else:
-                i = i +1
-        return None
+usb_name = "MASTER"
 
 #lists usbs in the path provided in the parameter
-def list_files_in_usb_macos(usb_path):
+def list_files_in_usb(usb_path):
     try:
         # Check if the provided path exists
         if not os.path.exists(usb_path):
@@ -75,6 +60,7 @@ def encrypt(text, shift):
                 encrypted_text += char
         encrypted_list.append(encrypted_text)
     return encrypted_list
+
 #finds usb for WINDOWS operating systems
 def find_specific_usb(volume_label):
     os_type = platform.system()
@@ -119,38 +105,43 @@ def read_files_from_usb(usb_path):
 def send():
     #This checks which os is being used by the user and calls the appropriate function
     if system[0] == "Darwin":
-        usb_name = get_name_macos()
         #calls the files listing function
         try:
-            if __name__ == "__main__":
-                usb_drive_path ='/Volumes/'+usb_name
-                list_files_in_usb_macos(usb_drive_path)
-            #calls the read file method
-            if __name__ == "__main__":
-
-                usb_file_path = '/Volumes/'+ usb_name +'/' +  list_files_in_usb_macos(usb_drive_path) # Linux/macOS example
-                password = read_file_from_usb(usb_file_path)
-                key = encrypt(password, 3)
-                return jsonify({'permission': key[0], 'email': key[1], 'password': key[2]})
+            usb_drive_path ='/Volumes/'+usb_name
+            list_files_in_usb(usb_drive_path)
+            usb_file_path = '/Volumes/'+ usb_name +'/' +  list_files_in_usb(usb_drive_path) # Linux/macOS example
+            password = read_file_from_usb(usb_file_path)
+            key = encrypt(password, 3)
+            return jsonify({'permission': key[0], 'email': key[1], 'password': key[2]})
         #checks for type error,usb we searched for was not found       
         except TypeError:
             return jsonify({'message' : "usb drive not found"})
             
     #Checks which us WINDOWS is the os
     elif system[0] == "Windows":  
-        if __name__ == "__main__":
-            volume_label = "MASTER"
-            usb_drive = find_specific_usb(volume_label)
-            print(usb_drive)
-            
-            if usb_drive:
-                password = read_files_from_usb(usb_drive)
-                key = encrypt(password, 3)
-                print(key)
-                return jsonify({'permission': key[0], 'email': key[1], 'password': key[2]})
-            else:
-                return jsonify({'permission' : "usb drive not found"})
+        usb_drive = find_specific_usb(usb_name)
+        print(usb_drive)
+        
+        if usb_drive:
+            password = read_files_from_usb(usb_drive)
+            key = encrypt(password, 3)
+            print(key)
+            return jsonify({'permission': key[0], 'email': key[1], 'password': key[2]})
+        else:
+            return jsonify({'permission' : "usb drive not found"})
+        
+    elif system[0] == "Linux":
+        try:
+            usb_drive_path ='/media/soar/'+usb_name
+            list_files_in_usb(usb_drive_path)
+            usb_file_path = '/media/soar/'+ usb_name +'/' +  list_files_in_usb(usb_drive_path) # Linux/macOS example
+            password = read_file_from_usb(usb_file_path)
+            key = encrypt(password, 3)
+            return jsonify({'permission': key[0], 'email': key[1], 'password': key[2]})
+        #checks for type error,usb we searched for was not found       
+        except TypeError:
+            return jsonify({'message' : "usb drive not found"})
+        
 #runs flask server
-
 if __name__ == '__main__':
    app.run()

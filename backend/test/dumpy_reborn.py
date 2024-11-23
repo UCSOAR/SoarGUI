@@ -4,8 +4,8 @@ import random
 import concurrent.futures
 
 endpoint = "http://localhost:8090"
-admin_email = "random@random.com"
-admin_password = "testtest123"
+admin_email = "test@test.com"
+admin_password = "0123456789"
 
 # Initialize PocketBase
 pb = PocketBase(endpoint)
@@ -13,9 +13,9 @@ pb = PocketBase(endpoint)
 # Authenticate
 admin_data = pb.admins.auth_with_password(admin_email, admin_password)
 
-if not admin_data.is_valid:
-    print("Authentication failed")
-    exit()
+# if not admin_data.is_valid:
+#     print("Authentication failed")
+#     exit()
 
 battery_data = ["INVALID", "GROUND", "ROCKET"]
 

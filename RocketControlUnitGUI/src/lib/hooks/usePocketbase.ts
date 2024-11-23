@@ -1,25 +1,33 @@
 import PocketBase from 'pocketbase';
 import type { Timestamps } from '../timestamps';
-import type { Stores } from '../stores';
-import {fetchPermission, fetchEmail, fetchPassword, getDecryption} from '../message';
+import { currentState, type Stores } from '../stores';
+import { fetchUsbMessage, decryptMessage } from '../message';
 
 export type PocketbaseHook = ReturnType<typeof usePocketbase>;
 
 export const usePocketbase = (timestamps: Timestamps, stores: Stores) => {
 	const pocketbase = new PocketBase('http://localhost:8090');
 
+	const usbMessagePromise = fetchUsbMessage();
+
 	const authenticate = async () => {
-		const email = await getDecryption(await fetchEmail());
-		const password = await getDecryption(await fetchPassword());
-		
-		if (email && password) {
+		const usbMessage = await usbMessagePromise;
+
+		if (usbMessage) {
+			const { email, password } = usbMessage;
+
+			const decryptedEmail = decryptMessage(email);
+			const decryptedPassword = decryptMessage(password);
+
 			pocketbase.authStore.clear();
-			await pocketbase.admins.authWithPassword(email, password);
+			await pocketbase.admins.authWithPassword(decryptedEmail, decryptedPassword);
+
 			return true;
-		} 
+		}
+
 		return false;
 	};
-                      
+
 	const sendHeartbeat = async () => {
 		await pocketbase.collection('Heartbeat').create({
 			message: 'heartbeat'
@@ -27,16 +35,17 @@ export const usePocketbase = (timestamps: Timestamps, stores: Stores) => {
 	};
 
 	const writeStateChange = async (state: string) => {
-		if(await getDecryption(await fetchPermission()) == "MasterKey"){
+		const usbMessage = await usbMessagePromise;
+
+		if (!usbMessage) {
+			return;
+		}
+
+		if (decryptMessage(usbMessage.permission) == 'MasterKey') {
 			await pocketbase.collection('CommandMessage').create({
 				target: 'NODE_DMB',
 				command: state
 			});
-		}
-		if(await getDecryption(await fetchPermission()) == "TesterKey"){	
-			//pass
-			//permission to change states is denied,
-			//writeStateChange will not be reassigned, state will not be changed
 		}
 	};
 
@@ -180,6 +189,7 @@ export const usePocketbase = (timestamps: Timestamps, stores: Stores) => {
 		// Subscribe to changes in the 'sys_state' collection
 		pocketbase.collection('sys_state').subscribe('*', (e) => {
 			stores.system_state.set(e.record.sys_state);
+			currentState.set(e.record.rocket_state);
 			timestamps.sys_state = Date.now();
 		});
 
