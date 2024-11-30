@@ -6,8 +6,8 @@ import string
 
 # Initialize PocketBase
 pb = Client("http://127.0.0.1:8090")
-admin_email = "test@test.com"
-admin_password = "password"
+admin_email = "danikasvetelj@ucalgary.ca"
+admin_password = "Ilmnh&h!Ilmnh&h!"
 
 # Authenticate
 admin_data = pb.admins.auth_with_password(admin_email, admin_password)
@@ -194,12 +194,12 @@ def sob_temperature_write():
 def board_status_write():
     pb.collection("BoardStatus").create(
         {
-            "dmb_status": random_string(5),
-            "pmb_status": random_string(5),
+            "fcb_status": random_string(5),
+            "pbb_status": random_string(5),
             "daq_status": random_string(5),
-            "cam_status": random_string(5),
+            "fsb_status": random_string(5),
             "bms_status": random_string(5),
-            "fab_status": random_string(5),
+            "cib_status": random_string(5),
             "lrb_status": random_string(5),
         }
     )
