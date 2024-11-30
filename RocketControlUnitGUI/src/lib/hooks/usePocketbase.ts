@@ -6,7 +6,7 @@ import { currentState } from '../stores';
 export type PocketbaseHook = ReturnType<typeof usePocketbase>;
 
 export const usePocketbase = (timestamps: Timestamps, stores: Stores) => {
-	const pocketbase = new PocketBase('http://192.168.0.69:8090');
+	const pocketbase = new PocketBase('http://localhost:5173/:8090');
 
 	const authenticate = async () => {
 		const email = import.meta.env.VITE_EMAIL;
@@ -186,6 +186,19 @@ export const usePocketbase = (timestamps: Timestamps, stores: Stores) => {
 			stores.timer_remaining.set(e.record.timer_remaining);
 
 			timestamps.heartbeat = Date.now();
+		});
+
+		// Subscribe to changes in the 'BoardStatus' collection
+		pocketbase.collection('BoardStatus').subscribe('*', function (e) {
+			stores.fcb_status.set(e.record.fcb_status);
+			stores.pbb_status.set(e.record.pbb_status);
+			stores.daq_status.set(e.record.daq_status);
+			stores.fsb_status.set(e.record.fsb_status);
+			stores.bms_status.set(e.record.bms_status);
+			stores.cib_status.set(e.record.cib_status);
+			stores.lrb_status.set(e.record.lrb_status);
+
+			timestamps.board_status = Date.now();
 		});
 	};
 
