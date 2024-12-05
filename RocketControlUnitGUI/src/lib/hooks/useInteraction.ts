@@ -54,6 +54,20 @@ export const useInteraction = (pocketbaseHook: PocketbaseHook) => {
 		modalStore.trigger(modal);
 	};
 
+	const confirmationModal = (title: string, onConfrim: () => void) => {
+		const modal: ModalSettings = {
+			type: 'confirm',
+			title: title,
+			response: (r: boolean) => {
+				if (r) {
+					onConfrim();
+				}
+			}
+		};
+
+		modalStore.trigger(modal);
+	}
+
 	const instantStateChange = (state: string) => {
 		nextStatePending = state;
 		pocketbaseHook.writeStateChange(nextStatePending);
@@ -165,5 +179,6 @@ export const useInteraction = (pocketbaseHook: PocketbaseHook) => {
 		confirmStateChange,
 		instantStateChange,
 		resumeConfirmRemoveWeight,
+		confirmationModal
 	};
 };

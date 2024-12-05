@@ -2,7 +2,7 @@
 	import '../styles/app.postcss';
 	import ReadOnlySvg from '$lib/components/ReadOnlySvg.svelte';
 	import { ThemeData, ThemeType } from '$lib/theme';
-	import { auth, currentState } from "$lib/stores";
+	import { auth, currentState, isSidebarExpanded, miniRcu } from '$lib/stores';
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { page } from '$app/stores';
 	import {
@@ -21,6 +21,12 @@
 	initializeStores();
 
 	$: themeData = new ThemeData($modeCurrent ? ThemeType.LIGHT : ThemeType.DARK);
+
+	const toggleSidebar = () => {
+		if ($miniRcu) {
+			$isSidebarExpanded = !$isSidebarExpanded;
+		}
+	};
 </script>
 
 <Modal />
@@ -33,12 +39,14 @@
 			<svelte:fragment slot="lead">
 				<div class="flex items-center">
 					<div class="flex items-center">
-						<img
-							src={themeData.logoSrc}
-							alt="SOAR Logo"
-							class="mr-2"
-							style="width: 70px; height: 35px;"
-						/>
+						<button on:click={toggleSidebar}>
+							<img
+								src={themeData.logoSrc}
+								alt="SOAR Logo"
+								class="mr-2"
+								style="width: 70px; height: 35px;"
+							/>
+						</button>
 					</div>
 				</div>
 			</svelte:fragment>
@@ -55,31 +63,46 @@
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
-	
+
 	<svelte:fragment slot="sidebarLeft">
-		<AppRail>
-			<AppRailAnchor hover="bg-primary-hover-token" href="/" selected={$page.url.pathname === '/'}>
-				<img src="/icons/rocket.png" class="sideBar-center" alt="Icon" />
-			</AppRailAnchor>
-			
-			<AppRailAnchor href="/data" selected={$page.url.pathname === "/data"}>
-				<img src="/icons/stats.png" class="sideBar-center" alt="Icon" />
-			</AppRailAnchor>
-			
-			<AppRailAnchor href="/live-feed" selected={$page.url.pathname === "/live-feed"}>
-				<img src="/icons/camera.png" class="sideBar-center" alt="Icon" />
-			</AppRailAnchor>
-			
-			<AppRailAnchor href="/about" selected={$page.url.pathname === "/about"}>
-				<img src="/icons/info.png" class="sideBar-center" alt="Icon" />
-			</AppRailAnchor>
-		</AppRail>
+		<div class={`sidebar ${$isSidebarExpanded || !$miniRcu ? 'expanded' : ''}`}>
+			<AppRail>
+				<AppRailAnchor
+					hover="bg-primary-hover-token"
+					href="/"
+					selected={$page.url.pathname === '/'}
+				>
+					<img src="/icons/rocket.png" class="sideBar-center" alt="Icon" />
+				</AppRailAnchor>
+
+				<AppRailAnchor href="/data" selected={$page.url.pathname === '/data'}>
+					<img src="/icons/stats.png" class="sideBar-center" alt="Icon" />
+				</AppRailAnchor>
+
+				<AppRailAnchor href="/live-feed" selected={$page.url.pathname === '/live-feed'}>
+					<img src="/icons/camera.png" class="sideBar-center" alt="Icon" />
+				</AppRailAnchor>
+
+				<AppRailAnchor href="/about" selected={$page.url.pathname === '/about'}>
+					<img src="/icons/info.png" class="sideBar-center" alt="Icon" />
+				</AppRailAnchor>
+			</AppRail>
+		</div>
 	</svelte:fragment>
-	
+
 	<slot>Some Slot</slot>
 </AppShell>
 
 <style>
+	div.sidebar {
+		margin-left: -300px;
+		transition: margin 0.15s ease-in-out;
+	}
+
+	div.sidebar.expanded {
+		margin-left: 0;
+	}
+
 	.sideBar-center {
 		filter: var(--icon-filter);
 		transition: filter 0.15s ease;

@@ -3,6 +3,14 @@ import { writable, type Writable } from 'svelte/store';
 export const currentState = writable('N/A');
 export const auth = writable(false);
 
+// These are intended for the smaller mini RCU screen.
+// When `miniRcu` is enabled, the sidebar can be
+// collapsed and expanded by clicking the soar logo.
+// Additionally, there are confirmation modals
+// when clicking the toggle switches.
+export const miniRcu = writable(true);
+export const isSidebarExpanded = writable(false); // Specific to Mini RCU
+
 export interface Stores {
 	ac1_open: Writable<any>;
 	pbv1_open: Writable<any>;
