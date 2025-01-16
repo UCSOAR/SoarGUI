@@ -6,8 +6,8 @@ import string
 
 # Initialize PocketBase
 pb = Client("http://127.0.0.1:8090")
-admin_email = "danikasvetelj@ucalgary.ca"
-admin_password = "Ilmnh&h!Ilmnh&h!"
+admin_email = "email"
+admin_password = "password"
 
 # Authenticate
 admin_data = pb.admins.auth_with_password(admin_email, admin_password)
