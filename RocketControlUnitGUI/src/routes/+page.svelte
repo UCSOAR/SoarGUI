@@ -440,6 +440,50 @@
 		<p>{timer_remaining_display}</p>
 	</div>
 
+	<div class="nos1_tare_button">
+		<button 
+			type="button" 
+			class="btn btn-sm variant-filled-secondary" 
+			on:click={() => performTare("NOS1")}
+		>
+			TARE
+		</button>
+	</div>
+
+	<div class="nos1_cal_button">
+		<button 
+			type="button" 
+			class="btn btn-sm variant-filled-error" 
+			on:click={() => {
+				writeLoadCellCommand("NOS1", "CANCEL", 0);
+				resumeConfirmRemoveWeight("NOS1");}}
+		>
+			CAL
+		</button>
+	</div>
+
+	<div class="nos2_tare_button">
+		<button 
+			type="button" 
+			class="btn btn-sm variant-filled-secondary" 
+			on:click={() => performTare("NOS2")}
+		>
+			TARE
+		</button>
+	</div>
+
+	<div class="nos2_cal_button">
+		<button 
+			type="button" 
+			class="btn btn-sm variant-filled-error" 
+			on:click={() => {
+				writeLoadCellCommand("NOS2", "CANCEL", 0);
+				resumeConfirmRemoveWeight("NOS2");}}
+		>
+			CAL
+		</button>
+	</div>
+
 	<!-- Render different buttons based on the current state -->
 	{#if $currentState == "RS_PRELAUNCH"}
 		<button
