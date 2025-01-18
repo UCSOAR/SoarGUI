@@ -179,7 +179,7 @@
 	$: rcuTempOutdated = Date.now() - timestamps.rcu_temp > 5000;
 	$: batteryOutdated = Date.now() - timestamps.battery > 5000;
 	$: launchRailLoadCellOutdated = Date.now() - timestamps.launch_rail_load_cell > 5000;
-	$: new_hybrid_nosLoadCellOutdated = Date.now() - timestamps.new_hybrid_nos_load_cell > 5000;
+	$: nosLoadCellOutdated = Date.now() - timestamps.nos_load_cell > 5000;
 	$: pbbPressureOutdated = Date.now() - timestamps.pbb_pressure > 5000;
 	$: pbbTemperatureOutdated = Date.now() - timestamps.pbb_temperature > 5000;
 	$: rcuPressureOutdated = Date.now() - timestamps.rcu_pressure > 5000;
@@ -197,7 +197,6 @@
 	}
 
 	let wasLiveAtAnyPoint = false;
-
 
 	const handleLaunchSequence = async () => {
 		await writeArbitraryCommand('NODE_RC', 'RC_IGNITE_PAD_BOX1');
@@ -464,11 +463,11 @@
 		<p>{new_hybrid_rcu_tc5_display}</p>
 	</div>
 
-	<div class="new_hybrid_nos1 new_hybrid_nos_load_cell {new_hybrid_nosLoadCellOutdated ? 'outdated' : ''}">
+	<div class="new_hybrid_nos1 new_hybrid_nos_load_cell {nosLoadCellOutdated ? 'outdated' : ''}">
 		<p>{new_hybrid_nos1_mass_display}</p>
 	</div>
 
-	<div class="new_hybrid_nos2 new_hybrid_nos_load_cell {new_hybrid_nosLoadCellOutdated ? 'outdated' : ''}">
+	<div class="new_hybrid_nos2 new_hybrid_nos_load_cell {nosLoadCellOutdated ? 'outdated' : ''}">
 		<p>{new_hybrid_nos2_mass_display}</p>
 	</div>
 
