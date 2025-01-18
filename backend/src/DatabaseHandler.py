@@ -38,6 +38,7 @@ class DatabaseHandler():
         DatabaseHandler.client.collection('Heartbeat').subscribe(DatabaseHandler._handle_heartbeat_callback)
         DatabaseHandler.client.collection('CommandMessage').subscribe(DatabaseHandler._handle_command_callback)
         DatabaseHandler.client.collection('LoadCellCommands').subscribe(DatabaseHandler._handle_load_cell_command_callback)
+        DatabaseHandler.client.collection('BoardPings').subscribe(DatabaseHandler._handle_board_ping_command_callback)
         logger.success(f"Successfully started {thread_name} thread")
 
     @staticmethod
@@ -106,6 +107,32 @@ class DatabaseHandler():
                 'loadcell',
                 THREAD_MESSAGE_LOAD_CELL_COMMAND,
                 (document.record.target, document.record.command, document.record.weight)
+            )
+        )
+
+    @staticmethod
+    def _handle_board_ping_callback(document: MessageData):
+        """
+        Whenever a new entry is created in the BoardPing 
+        collection, this function is called to handle the
+        command and forward it to the serial port.
+
+        Args:
+            document (MessageData): the change notification from the database.
+        """
+
+        logger.info("Received new command from the database")
+        logger.debug(f"Record command: {document.record.command}")
+        DatabaseHandler.send_message_workq.put(
+            WorkQ_Message(
+                DatabaseHandler.thread_name,
+                'all_serial', 
+                THREAD_MESSAGE_SERIAL_WRITE, 
+                (document.record.command,
+                 document.record.target,
+                 document.record.command_param,
+                 document.record.source_sequence_num
+                )
             )
         )
 
