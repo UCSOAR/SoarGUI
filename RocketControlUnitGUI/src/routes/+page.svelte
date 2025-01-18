@@ -1,6 +1,6 @@
 <script lang="ts">
 	import "../styles/display.postcss";
-	import Diagram from '$lib/components/Diagram.svelte';
+	import Diagram from '$lib/components/NewHybrid.svelte';
 	import { initTimestamps, type Timestamps } from '$lib/timestamps';
 	import { usePocketbase } from '$lib/hooks/usePocketbase';
 	import { initStores, auth, currentState } from '$lib/stores';
@@ -30,7 +30,8 @@
 
 	// Destructure stores for later use
 	const {
-		ac1_open,
+		new_hybrid_ac2_open,
+
         pbv1_open,
         pbv2_open,
         pbv3_open,
@@ -139,7 +140,7 @@
 		};
 	});
 
-	$: ac1_display = $ac1_open === undefined ? 'N/A' : $ac1_open ? 'ON' : 'OFF';
+	$: new_hybrid_ac2_display = $new_hybrid_ac2_open === undefined ? 'AC2 N/A' : $new_hybrid_ac2_open ? 'ON' : 'OFF';
 
 	$: pbv1_display = $pbv1_open === undefined ? 'N/A' : $pbv1_open ? 'OPEN' : 'CLOSE';
 	$: pbv2_display = $pbv2_open === undefined ? 'N/A' : $pbv2_open ? 'OPEN' : 'CLOSE';
@@ -257,15 +258,15 @@
 <div class="container">
 	<Diagram />
 
-	<div class="ac1_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
+	<div class="new_hybrid_ac2_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
 		<SlideToggle
-			name="ac1_slider"
+			name="new_hybrid_ac2_slider"
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
-			bind:checked={$ac1_open}
-			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_AC1', 'RCU_CLOSE_AC1')}
+			bind:checked={$new_hybrid_ac2_open}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_AC2', 'RCU_CLOSE_AC2')}
 		>
-			{ac1_display}
+			{new_hybrid_ac2_display}
 		</SlideToggle>
 	</div>
 
