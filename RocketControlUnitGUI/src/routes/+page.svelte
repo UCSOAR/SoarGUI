@@ -32,37 +32,34 @@
 	const {
 		new_hybrid_ac2_open,
 
-        pbv1_open,
-        pbv2_open,
-        pbv3_open,
-        pbv4_open,
-        sol5_open,
-        sol6_open,
-        sol7_open,
-        sol8a_open,
-        sol8b_open,
-        box1_on,
-        box2_on,
-        vent_open,
-        drain_open,
-        mev_open,
-        rcu_tc1_temperature,
-        rcu_tc2_temperature,
-        battery_voltage,
-		power_source,
-		upper_pv_pressure,
-		rocket_mass,
-		nos1_mass,
-		nos2_mass,
-		ib_pressure,
-		lower_pv_pressure,
-		pv_temperature,
-		pt1_pressure,
-		pt2_pressure,
-		pt3_pressure,
-		pt4_pressure,
-		sob_tc1_temperature,
-		sob_tc2_temperature,
+        new_hybrid_pbv1_open,
+        new_hybrid_pbv2_open,
+        new_hybrid_pbv3_open,
+        new_hybrid_pbv4_open,
+        new_hybrid_pbv5_open,
+        new_hybrid_pbv6_open,
+
+        new_hybrid_sol5_open,
+        new_hybrid_sol6_open,
+        new_hybrid_sol7_open,
+        new_hybrid_sol8a_open,
+        new_hybrid_sol8b_open,
+
+        new_hybrid_rcu_tc1_temperature,
+        new_hybrid_rcu_tc2_temperature,
+        new_hybrid_rcu_tc3_temperature,
+        new_hybrid_rcu_tc4_temperature,
+        new_hybrid_rcu_tc5_temperature,
+
+		new_hybrid_nos1_mass,
+		new_hybrid_nos2_mass,
+        
+		new_hybrid_pt1_pressure,
+		new_hybrid_pt2_pressure,
+		new_hybrid_pt3_pressure,
+		new_hybrid_pt4_pressure,
+        new_hybrid_pt5_pressure,
+
 		system_state,
 		timer_state,
 		timer_period,
@@ -142,50 +139,33 @@
 
 	$: new_hybrid_ac2_display = $new_hybrid_ac2_open === undefined ? 'AC2 N/A' : $new_hybrid_ac2_open ? 'ON' : 'OFF';
 
-	$: pbv1_display = $pbv1_open === undefined ? 'N/A' : $pbv1_open ? 'OPEN' : 'CLOSE';
-	$: pbv2_display = $pbv2_open === undefined ? 'N/A' : $pbv2_open ? 'OPEN' : 'CLOSE';
-	$: pbv3_display = $pbv3_open === undefined ? 'N/A' : $pbv3_open ? 'OPEN' : 'CLOSE';
-	$: pbv4_display = $pbv4_open === undefined ? 'N/A' : $pbv4_open ? 'CLOSE' : 'OPEN';
+	$: new_hybrid_pbv1_display = $new_hybrid_pbv1_open === undefined ? 'pbv1 N/A' : $new_hybrid_pbv1_open ? 'OPEN' : 'CLOSE';
+	$: new_hybrid_pbv2_display = $new_hybrid_pbv2_open === undefined ? 'pbv2 N/A' : $new_hybrid_pbv2_open ? 'OPEN' : 'CLOSE';
+	$: new_hybrid_pbv3_display = $new_hybrid_pbv3_open === undefined ? 'pbv3 N/A' : $new_hybrid_pbv3_open ? 'OPEN' : 'CLOSE';
+	$: new_hybrid_pbv4_display = $new_hybrid_pbv4_open === undefined ? 'pbv4 N/A' : $new_hybrid_pbv4_open ? 'CLOSE' : 'OPEN';
+    $: new_hybrid_pbv5_display = $new_hybrid_pbv5_open === undefined ? 'pbv5 N/A' : $new_hybrid_pbv5_open ? 'CLOSE' : 'OPEN';
+    $: new_hybrid_pbv6_display = $new_hybrid_pbv6_open === undefined ? 'pbv6 N/A' : $new_hybrid_pbv6_open ? 'CLOSE' : 'OPEN';
 
-	$: sol5_display = $sol5_open === undefined ? 'N/A' : $sol5_open ? 'OPEN' : 'CLOSE';
-	$: sol6_display = $sol6_open === undefined ? 'N/A' : $sol6_open ? 'OPEN' : 'CLOSE';
-	$: sol7_display = $sol7_open === undefined ? 'N/A' : $sol7_open ? 'OPEN' : 'CLOSE';
-	$: sol8a_display = $sol8a_open === undefined ? 'N/A' : $sol8a_open ? 'OPEN' : 'CLOSE';
-	$: sol8b_display = $sol8b_open === undefined ? 'N/A' : $sol8b_open ? 'OPEN' : 'CLOSE';
+	$: new_hybrid_sol5_display = $new_hybrid_sol5_open === undefined ? 'sol5 N/A' : $new_hybrid_sol5_open ? 'OPEN' : 'CLOSE';
+	$: new_hybrid_sol6_display = $new_hybrid_sol6_open === undefined ? 'sol6 N/A' : $new_hybrid_sol6_open ? 'OPEN' : 'CLOSE';
+	$: new_hybrid_sol7_display = $new_hybrid_sol7_open === undefined ? 'sol7 N/A' : $new_hybrid_sol7_open ? 'OPEN' : 'CLOSE';
+	$: new_hybrid_sol8a_display = $new_hybrid_sol8a_open === undefined ? 'sol8a N/A' : $new_hybrid_sol8a_open ? 'OPEN' : 'CLOSE';
+	$: new_hybrid_sol8b_display = $new_hybrid_sol8b_open === undefined ? 'sol8b N/A' : $new_hybrid_sol8b_open ? 'OPEN' : 'CLOSE';
 
-	$: box1_display = $box1_on === undefined ? 'N/A' : $box1_on ? 'LIVE' : 'DEAD';
-	$: box2_display = $box2_on === undefined ? 'N/A' : $box2_on ? 'LIVE' : 'DEAD';
+	$: new_hybrid_rcu_tc1_display = $new_hybrid_rcu_tc1_temperature === undefined ? 'tc1 N/A' : $new_hybrid_rcu_tc1_temperature;
+	$: new_hybrid_rcu_tc2_display = $new_hybrid_rcu_tc2_temperature === undefined ? 'tc2 N/A' : $new_hybrid_rcu_tc2_temperature;
+    $: new_hybrid_rcu_tc3_display = $new_hybrid_rcu_tc3_temperature === undefined ? 'tc3 N/A' : $new_hybrid_rcu_tc3_temperature;
+    $: new_hybrid_rcu_tc4_display = $new_hybrid_rcu_tc4_temperature === undefined ? 'tc4 N/A' : $new_hybrid_rcu_tc4_temperature;
+    $: new_hybrid_rcu_tc5_display = $new_hybrid_rcu_tc5_temperature === undefined ? 'tc5 N/A' : $new_hybrid_rcu_tc5_temperature;
 
-	$: vent_display = $vent_open === undefined ? 'N/A' : $vent_open ? 'OPEN' : 'CLOSED';
-	$: drain_display = $drain_open === undefined ? 'N/A' : $drain_open ? 'OPEN' : 'CLOSED';
+	$: new_hybrid_nos1_mass_display = $new_hybrid_nos1_mass === undefined ? 'nos1 N/A' : Number($new_hybrid_nos1_mass).toFixed(2);
+	$: new_hybrid_nos2_mass_display = $new_hybrid_nos2_mass === undefined ? 'nos2 N/A' : Number($new_hybrid_nos2_mass).toFixed(2);
 
-	$: rcu_tc1_display = $rcu_tc1_temperature === undefined ? 'N/A' : $rcu_tc1_temperature;
-	$: rcu_tc2_display = $rcu_tc2_temperature === undefined ? 'N/A' : $rcu_tc2_temperature;
-
-	$: mev_display = $mev_open === undefined ? 'N/A' : $mev_open ? 'OPEN' : 'CLOSED';
-
-	$: battery_display = $battery_voltage === undefined ? 'N/A' : $battery_voltage;
-	$: power_display = $power_source === undefined ? 'N/A' : $power_source ? 'ROCKET' : 'GROUND';
-
-	$: upper_pv_display = $upper_pv_pressure === undefined ? 'DC' : $upper_pv_pressure;
-
-	$: rocket_mass_display = $rocket_mass === undefined ? 'N/A' : Number($rocket_mass).toFixed(2);
-
-	$: nos1_mass_display = $nos1_mass === undefined ? 'N/A' : Number($nos1_mass).toFixed(2);
-	$: nos2_mass_display = $nos2_mass === undefined ? 'N/A' : Number($nos2_mass).toFixed(2);
-
-	$: ib_pressure_display = $ib_pressure === undefined ? 'N/A' : $ib_pressure;
-	$: lower_pv_display = $lower_pv_pressure === undefined ? 'N/A' : $lower_pv_pressure;
-
-	$: pv_temperature_display = $pv_temperature === undefined ? 'N/A' : $pv_temperature;
-
-	$: pt1_pressure_display = $pt1_pressure === undefined ? 'N/A' : $pt1_pressure;
-	$: pt2_pressure_display = $pt2_pressure === undefined ? 'N/A' : $pt2_pressure;
-	$: pt3_pressure_display = $pt3_pressure === undefined ? 'N/A' : $pt3_pressure;
-	$: pt4_pressure_display = $pt4_pressure === undefined ? 'N/A' : $pt4_pressure;
-
-	$: sob_tc1_display = $sob_tc1_temperature === undefined ? 'N/A' : $sob_tc1_temperature;
-	$: sob_tc2_display = $sob_tc2_temperature === undefined ? 'N/A' : $sob_tc2_temperature;
+	$: new_hybrid_pt1_pressure_display = $new_hybrid_pt1_pressure === undefined ? 'pt1 N/A' : $new_hybrid_pt1_pressure;
+	$: new_hybrid_pt2_pressure_display = $new_hybrid_pt2_pressure === undefined ? 'pt2 N/A' : $new_hybrid_pt2_pressure;
+	$: new_hybrid_pt3_pressure_display = $new_hybrid_pt3_pressure === undefined ? 'pt3 N/A' : $new_hybrid_pt3_pressure;
+	$: new_hybrid_pt4_pressure_display = $new_hybrid_pt4_pressure === undefined ? 'pt4 N/A' : $new_hybrid_pt4_pressure;
+    $: new_hybrid_pt5_pressure_display = $new_hybrid_pt5_pressure === undefined ? 'pt5 N/A' : $new_hybrid_pt5_pressure;
 
 	$: system_state_display = $system_state === undefined ? 'N/A' : $system_state.replace('SYS_', '');
 
@@ -193,16 +173,16 @@
 	$: timer_period_display = $timer_period === undefined ? 'N/A' : ($timer_period / 1000).toFixed(0); // Convert to seconds
 	$: timer_remaining_display = $timer_remaining === undefined ? 'N/A' : ($timer_remaining / 1000).toFixed(0); // Convert to seconds
 
+	
 	$: relayStatusOutdated = Date.now() - timestamps.relay_status > 5000;
 	$: combustionControlStatusOutdated = Date.now() - timestamps.combustion_control_status > 5000;
 	$: rcuTempOutdated = Date.now() - timestamps.rcu_temp > 5000;
 	$: batteryOutdated = Date.now() - timestamps.battery > 5000;
 	$: launchRailLoadCellOutdated = Date.now() - timestamps.launch_rail_load_cell > 5000;
-	$: nosLoadCellOutdated = Date.now() - timestamps.nos_load_cell > 5000;
+	$: new_hybrid_nosLoadCellOutdated = Date.now() - timestamps.new_hybrid_nos_load_cell > 5000;
 	$: pbbPressureOutdated = Date.now() - timestamps.pbb_pressure > 5000;
 	$: pbbTemperatureOutdated = Date.now() - timestamps.pbb_temperature > 5000;
 	$: rcuPressureOutdated = Date.now() - timestamps.rcu_pressure > 5000;
-	$: sobTemperatureOutdated = Date.now() - timestamps.sob_temperature > 5000;
 	$: sysStateOutdated = Date.now() - timestamps.sys_state > 5000;
 	$: heartbeatOutdated = Date.now() - timestamps.heartbeat > 5000;
 
@@ -218,11 +198,6 @@
 
 	let wasLiveAtAnyPoint = false;
 
-	const pollIgnitors = async () => {
-		if (box1_display === 'LIVE' || box2_display === 'LIVE') {
-			wasLiveAtAnyPoint = true;
-		}
-	}
 
 	const handleLaunchSequence = async () => {
 		await writeArbitraryCommand('NODE_RC', 'RC_IGNITE_PAD_BOX1');
@@ -270,185 +245,140 @@
 		</SlideToggle>
 	</div>
 
-	<div class="pbv1_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
+	<div class="new_hybrid_pbv1_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
 		<SlideToggle
-			name="pbv1_slider"
+			name="new_hybrid_pbv1_slider"
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
-			bind:checked={$pbv1_open}
+			bind:checked={$new_hybrid_pbv1_open}
 			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV1', 'RCU_CLOSE_PBV1')}
 		>
-			{pbv1_display}
+			{new_hybrid_pbv1_display}
 		</SlideToggle>
 	</div>
 
-	<div class="pbv2_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
+	<div class="new_hybrid_pbv2_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
 		<SlideToggle
-			name="pbv2_slider"
+			name="new_hybrid_pbv2_slider"
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
-			bind:checked={$pbv2_open}
+			bind:checked={$new_hybrid_pbv2_open}
 			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV2', 'RCU_CLOSE_PBV2')}
 		>
-			{pbv2_display}
+			{new_hybrid_pbv2_display}
 		</SlideToggle>
 	</div>
 
-	<div class="pbv3_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
+	<div class="new_hybrid_pbv3_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
 		<SlideToggle
-			name="pbv3_slider"
+			name="new_hybrid_pbv3_slider"
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
-			bind:checked={$pbv3_open}
+			bind:checked={$new_hybrid_pbv3_open}
 			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV3', 'RCU_CLOSE_PBV3')}
 		>
-			{pbv3_display}
+			{new_hybrid_pbv3_display}
 		</SlideToggle>
 	</div>
 
-	<div class="pbv4_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
+	<div class="new_hybrid_pbv4_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
 		<SlideToggle
-			name="pbv4_slider"
+			name="new_hybrid_pbv4_slider"
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
-			bind:checked={$pbv4_open}
+			bind:checked={$new_hybrid_pbv4_open}
 			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV4', 'RCU_CLOSE_PBV4')}
 		>
-			{pbv4_display}
+			{new_hybrid_pbv4_display}
+		</SlideToggle>
+	</div>
+
+    <div class="new_hybrid_pbv5_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
+		<SlideToggle
+			name="new_hybrid_pbv5_slider"
+			active="bg-primary-500 dark:bg-primary-500"
+			size="sm"
+			bind:checked={$new_hybrid_pbv5_open}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV5', 'RCU_CLOSE_PBV5')}
+		>
+			{new_hybrid_pbv5_display}
+		</SlideToggle>
+	</div>
+
+    <div class="new_hybrid_pbv6_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
+		<SlideToggle
+			name="new_hybrid_pbv6_slider"
+			active="bg-primary-500 dark:bg-primary-500"
+			size="sm"
+			bind:checked={$new_hybrid_pbv6_open}
+			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_PBV6', 'RCU_CLOSE_PBV6')}
+		>
+			{new_hybrid_pbv6_display}
 		</SlideToggle>
 	</div>
 	
-	<div class="sol5_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
+	<div class="new_hybrid_sol5_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
 		<SlideToggle
-			name="sol5_slider"
+			name="new_hybrid_sol5_slider"
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
-			bind:checked={$sol5_open}
+			bind:checked={$new_hybrid_sol5_open}
 			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL5', 'RCU_CLOSE_SOL5')}
 		>
-			{sol5_display}
+			{new_hybrid_sol5_display}
 		</SlideToggle>
 	</div>
 
-	<div class="sol6_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
+	<div class="new_hybrid_sol6_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
 		<SlideToggle
-			name="sol6_slider"
+			name="new_hybrid_sol6_slider"
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
-			bind:checked={$sol6_open}
+			bind:checked={$new_hybrid_sol6_open}
 			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL6', 'RCU_CLOSE_SOL6')}
 		>
-			{sol6_display}
+			{new_hybrid_sol6_display}
 		</SlideToggle>
 	</div>
 
-	<div class="sol7_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
+	<div class="new_hybrid_sol7_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
 		<SlideToggle
-			name="sol7_slider"
+			name="new_hybrid_sol7_slider"
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
-			bind:checked={$sol7_open}
+			bind:checked={$new_hybrid_sol7_open}
 			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL7', 'RCU_CLOSE_SOL7')}
 		>
-			{sol7_display}
+			{new_hybrid_sol7_display}
 		</SlideToggle>
 	</div>
 
-	<div class="sol8a_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
+	<div class="new_hybrid_sol8a_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
 		<SlideToggle
-			name="sol8a_slider"
+			name="new_hybrid_sol8a_slider"
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
-			bind:checked={$sol8a_open}
+			bind:checked={$new_hybrid_sol8a_open}
 			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL8A', 'RCU_CLOSE_SOL8A')}
 		>
-			{sol8a_display}
+			{new_hybrid_sol8a_display}
 		</SlideToggle>
 	</div>
 
-	<div class="sol8b_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
+	<div class="new_hybrid_sol8b_slider relay_status {relayStatusOutdated ? 'outdated' : ''}">
 		<SlideToggle
-			name="sol8b_slider"
+			name="new_hybrid_sol8b_slider"
 			active="bg-primary-500 dark:bg-primary-500"
 			size="sm"
-			bind:checked={$sol8b_open}
+			bind:checked={$new_hybrid_sol8b_open}
 			on:click={(e) => handleSliderChange(e, 'NODE_RCU', 'RCU_OPEN_SOL8B', 'RCU_CLOSE_SOL8B')}
 		>
-			{sol8b_display}
+			{new_hybrid_sol8b_display}
 		</SlideToggle>
 	</div>
+	
 
-	<div class="vent_slider combustion_control_status {combustionControlStatusOutdated ? 'outdated' : ''}">
-		<SlideToggle
-			name="vent_slider"
-			active="bg-primary-500 dark:bg-primary-500"
-			size="sm"
-			bind:checked={$vent_open}
-			on:click={(e) => handleSliderChange(e, 'NODE_DMB', 'RSC_OPEN_VENT', 'RSC_CLOSE_VENT')}
-		>
-			{vent_display}
-		</SlideToggle>
-	</div>
-
-	<div class="drain_slider combustion_control_status {combustionControlStatusOutdated ? 'outdated' : ''}">
-		<SlideToggle
-			name="drain_slider"
-			active="bg-primary-500 dark:bg-primary-500"
-			size="sm"
-			bind:checked={$drain_open}
-			on:click={(e) => handleSliderChange(e, 'NODE_DMB', 'RSC_OPEN_DRAIN', 'RSC_CLOSE_DRAIN')}
-		>
-			{drain_display}
-		</SlideToggle>
-	</div>
-
-	<div class="power_source_slider battery {batteryOutdated  ? 'outdated' : ''}">
-		<SlideToggle
-			name="power_source_slider"
-			active="bg-primary-500 dark:bg-primary-500"
-			size="sm"
-			bind:checked={$power_source}
-			on:click={(e) =>
-				handleSliderChange(
-					e,
-					'NODE_DMB',
-					'RSC_POWER_TRANSITION_ONBOARD',
-					'RSC_POWER_TRANSITION_EXTERNAL'
-				)}
-		>
-			{power_display}
-		</SlideToggle>
-	</div>
-
-	{#if $currentState === "RS_IGNITION" || $currentState === "RS_TEST" || $currentState === "RS_ABORT" || $currentState === "RS_LAUNCH" || $currentState === "RS_BURN" || $currentState === "RS_COAST" || $currentState === "RS_RECOVERY"}
-		<div class="box1_slider">
-			<SlideToggle
-				name="box1_slider"
-				active="bg-primary-500 dark:bg-primary-500"
-				size="sm"
-				bind:checked={$box1_on}
-				on:click={handleIgnition}
-				disabled={$currentState === "RS_IGNITION" || $currentState === "RS_ABORT" || $currentState === "RS_LAUNCH" || $currentState === "RS_BURN" || $currentState === "RS_COAST" || $currentState === "RS_RECOVERY"}
-			>
-				{box1_display}
-			</SlideToggle>
-		</div>
-
-		<div class="box2_slider">
-			<SlideToggle
-				name="box2_slider"
-				active="bg-primary-500 dark:bg-primary-500"
-				size="sm"
-				bind:checked={$box2_on}
-				on:click={handleIgnition}
-				disabled={$currentState === "RS_IGNITION" || $currentState === "RS_ABORT" || $currentState === "RS_LAUNCH" || $currentState === "RS_BURN" || $currentState === "RS_COAST" || $currentState === "RS_RECOVERY"}
-			>
-				{box2_display}
-			</SlideToggle>
-		</div>
-	{/if}
-
-	<div class="nos1_tare_button">
+	<div class="new_hybrid_nos1_tare_button">
 		<button 
 			type="button" 
 			class="btn btn-sm variant-filled-secondary" 
@@ -458,7 +388,7 @@
 		</button>
 	</div>
 
-	<div class="nos1_cal_button">
+	<div class="new_hybrid_nos1_cal_button">
 		<button 
 			type="button" 
 			class="btn btn-sm variant-filled-error" 
@@ -470,7 +400,7 @@
 		</button>
 	</div>
 
-	<div class="nos2_tare_button">
+	<div class="new_hybrid_nos2_tare_button">
 		<button 
 			type="button" 
 			class="btn btn-sm variant-filled-secondary" 
@@ -480,7 +410,7 @@
 		</button>
 	</div>
 
-	<div class="nos2_cal_button">
+	<div class="new_hybrid_nos2_cal_button">
 		<button 
 			type="button" 
 			class="btn btn-sm variant-filled-error" 
@@ -514,78 +444,52 @@
 		</button>
 	</div>
 
-	<div class="rcu_tc1 rcu_temp {rcuTempOutdated ? 'outdated' : ''}">
-		<p>{rcu_tc1_display}</p>
+	<div class="new_hybrid_rcu_tc1 rcu_temp {rcuTempOutdated ? 'outdated' : ''}">
+		<p>{new_hybrid_rcu_tc1_display}</p>
 	</div>
 
-	<div class="rcu_tc2 rcu_temp {rcuTempOutdated ? 'outdated' : ''}">
-		<p>{rcu_tc2_display}</p>
+	<div class="new_hybrid_rcu_tc2 rcu_temp {rcuTempOutdated ? 'outdated' : ''}">
+		<p>{new_hybrid_rcu_tc2_display}</p>
 	</div>
 
-	<div class="nos1 nos_load_cell {nosLoadCellOutdated ? 'outdated' : ''}">
-		<p>{nos1_mass_display}</p>
+    <div class="new_hybrid_rcu_tc3 rcu_temp {rcuTempOutdated ? 'outdated' : ''}">
+		<p>{new_hybrid_rcu_tc3_display}</p>
 	</div>
 
-	<div class="nos2 nos_load_cell {nosLoadCellOutdated ? 'outdated' : ''}">
-		<p>{nos2_mass_display}</p>
+    <div class="new_hybrid_rcu_tc4 rcu_temp {rcuTempOutdated ? 'outdated' : ''}">
+		<p>{new_hybrid_rcu_tc4_display}</p>
 	</div>
 
-	<div class="pt1_pressure rcu_pressure {rcuPressureOutdated ? 'outdated' : ''}">
-		<p>{pt1_pressure_display}</p>
+    <div class="new_hybrid_rcu_tc5 rcu_temp {rcuTempOutdated ? 'outdated' : ''}">
+		<p>{new_hybrid_rcu_tc5_display}</p>
 	</div>
 
-	<div class="pt2_pressure rcu_pressure {rcuPressureOutdated ? 'outdated' : ''}">
-		<p>{pt2_pressure_display}</p>
+	<div class="new_hybrid_nos1 new_hybrid_nos_load_cell {new_hybrid_nosLoadCellOutdated ? 'outdated' : ''}">
+		<p>{new_hybrid_nos1_mass_display}</p>
 	</div>
 
-	<div class="pt3_pressure rcu_pressure {rcuPressureOutdated ? 'outdated' : ''}">
-		<p>{pt3_pressure_display}</p>
+	<div class="new_hybrid_nos2 new_hybrid_nos_load_cell {new_hybrid_nosLoadCellOutdated ? 'outdated' : ''}">
+		<p>{new_hybrid_nos2_mass_display}</p>
 	</div>
 
-	<div class="pt4_pressure rcu_pressure {rcuPressureOutdated ? 'outdated' : ''}">
-		<p>{pt4_pressure_display}</p>
+	<div class="new_hybrid_pt1_pressure rcu_pressure {rcuPressureOutdated ? 'outdated' : ''}">
+		<p>{new_hybrid_pt1_pressure_display}</p>
 	</div>
 
-	<div class="box1_continuity">
+	<div class="new_hybrid_pt2_pressure rcu_pressure {rcuPressureOutdated ? 'outdated' : ''}">
+		<p>{new_hybrid_pt2_pressure_display}</p>
 	</div>
 
-	<div class="box2_continuity">
+	<div class="new_hybrid_pt3_pressure rcu_pressure {rcuPressureOutdated ? 'outdated' : ''}">
+		<p>{new_hybrid_pt3_pressure_display}</p>
 	</div>
 
-	<div class="mev_status combustion_control_status {combustionControlStatusOutdated ? 'outdated' : ''}">
-		<p>{mev_display}</p>
+	<div class="new_hybrid_pt4_pressure rcu_pressure {rcuPressureOutdated ? 'outdated' : ''}">
+		<p>{new_hybrid_pt4_pressure_display}</p>
 	</div>
 
-	<div class="battery_voltage  battery {batteryOutdated ? 'outdated' : ''}">
-		<p>{battery_display}</p>
-	</div>
-
-	<div class="upper_pv_pressure">
-		<p>{upper_pv_display}</p>
-	</div>
-
-	<div class="rocket_mass launch_rail_load_cell {launchRailLoadCellOutdated ? 'outdated' : ''}">
-		<p>{rocket_mass_display}</p>
-	</div>
-
-	<div class="ib_pressure pbb_pressure {pbbPressureOutdated ? 'outdated' : ''}">
-		<p>{ib_pressure_display}</p>
-	</div>
-
-	<div class="lower_pv_pressure pbb_pressure {pbbPressureOutdated ? 'outdated' : ''}">
-		<p>{lower_pv_display}</p>
-	</div>
-
-	<div class="pv_temperature pbb_temperature {pbbTemperatureOutdated ? 'outdated' : ''}">
-		<p>{pv_temperature_display}</p>
-	</div>
-
-	<div class="sob_tc1 sob_temperature {sobTemperatureOutdated ? 'outdated' : ''}">
-		<p>{sob_tc1_display}</p>
-	</div>
-
-	<div class="sob_tc2 sob_temperature {sobTemperatureOutdated ? 'outdated' : ''}">
-		<p>{sob_tc2_display}</p>
+    <div class="new_hybrid_pt5_pressure rcu_pressure {rcuPressureOutdated ? 'outdated' : ''}">
+		<p>{new_hybrid_pt5_pressure_display}</p>
 	</div>
 
 	<div class="system_state sys_state {sysStateOutdated ? 'outdated' : ''}">
