@@ -69,10 +69,6 @@
 			<AppRailAnchor href="/live-feed" selected={$page.url.pathname === "/live-feed"}>
 				<img src="/icons/camera.png" class="sideBar-center" alt="Icon" />
 			</AppRailAnchor>
-			
-			<AppRailAnchor href="/about" selected={$page.url.pathname === "/about"}>
-				<img src="/icons/info.png" class="sideBar-center" alt="Icon" />
-			</AppRailAnchor>
 		</AppRail>
 	</svelte:fragment>
 	
