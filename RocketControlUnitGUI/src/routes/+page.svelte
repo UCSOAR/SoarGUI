@@ -202,10 +202,10 @@
 		await writeArbitraryCommand('NODE_RC', 'RC_IGNITE_PAD_BOX1');
 		await writeArbitraryCommand('NODE_RC', 'RC_IGNITE_PAD_BOX2');
 
-		const pollInterval = setInterval(pollIgnitors, 100);
+		//const pollInterval = setInterval(pollIgnitors, 100);
 		await new Promise(resolve => setTimeout(resolve, 3500));
 
-		clearInterval(pollInterval);
+		//clearInterval(pollInterval);
 
 		if (wasLiveAtAnyPoint) {
 			for (let i = 0; i < 3; i++) {
