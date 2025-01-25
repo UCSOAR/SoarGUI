@@ -32,6 +32,8 @@ export interface Stores {
 	timer_state: Writable<string | undefined>;
 	timer_period: Writable<number | undefined>;
 	timer_remaining: Writable<number | undefined>;
+	box1_on: Writable<any>;
+	box2_on: Writable<any>;
 }
 
 export const initStores = () => {
@@ -64,6 +66,8 @@ export const initStores = () => {
 		system_state: writable<string | undefined>(undefined),
 		timer_state: writable<string | undefined>(undefined),
 		timer_period: writable<number | undefined>(undefined),
-		timer_remaining: writable<number | undefined>(undefined)
+		timer_remaining: writable<number | undefined>(undefined),
+		box1_on: writable(undefined),
+		box2_on: writable(undefined),
 	};
 };

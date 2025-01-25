@@ -60,6 +60,9 @@
 		new_hybrid_pt4_pressure,
         new_hybrid_pt5_pressure,
 
+		box1_on,
+        box2_on,
+
 		system_state,
 		timer_state,
 		timer_period,
@@ -173,6 +176,8 @@
 	$: timer_period_display = $timer_period === undefined ? 'N/A' : ($timer_period / 1000).toFixed(0); // Convert to seconds
 	$: timer_remaining_display = $timer_remaining === undefined ? 'N/A' : ($timer_remaining / 1000).toFixed(0); // Convert to seconds
 
+	$: box1_display = $box1_on === undefined ? 'N/A' : $box1_on ? 'LIVE' : 'DEAD';
+	$: box2_display = $box2_on === undefined ? 'N/A' : $box2_on ? 'LIVE' : 'DEAD'
 	
 	$: relayStatusOutdated = Date.now() - timestamps.relay_status > 5000;
 	$: combustionControlStatusOutdated = Date.now() - timestamps.combustion_control_status > 5000;
@@ -198,14 +203,20 @@
 
 	let wasLiveAtAnyPoint = false;
 
+	const pollIgnitors = async () => {
+		if (box1_display === 'LIVE' || box2_display === 'LIVE') {
+			wasLiveAtAnyPoint = true;
+		}
+	}
+
 	const handleLaunchSequence = async () => {
 		await writeArbitraryCommand('NODE_RC', 'RC_IGNITE_PAD_BOX1');
 		await writeArbitraryCommand('NODE_RC', 'RC_IGNITE_PAD_BOX2');
 
-		//const pollInterval = setInterval(pollIgnitors, 100);
+		const pollInterval = setInterval(pollIgnitors, 100);
 		await new Promise(resolve => setTimeout(resolve, 3500));
 
-		//clearInterval(pollInterval);
+		clearInterval(pollInterval);
 
 		if (wasLiveAtAnyPoint) {
 			for (let i = 0; i < 3; i++) {
@@ -227,6 +238,7 @@
 		await handleSliderChange(e, 'NODE_RCU', 'RCU_IGNITE_PAD_BOX1', 'RCU_KILL_BOX1');
 		await handleSliderChange(e, 'NODE_RCU', 'RCU_KILL_PAD_BOX2', 'RCU_IGNITE_PAD_BOX2');
 	}
+
 </script>
 
 <div class="container">
@@ -439,6 +451,34 @@
 	<div class="timer_remaining heartbeat {heartbeatOutdated ? 'outdated' : ''}">
 		<p>{timer_remaining_display}</p>
 	</div>
+
+	{#if $currentState === "RS_IGNITION" || $currentState === "RS_TEST" || $currentState === "RS_ABORT" || $currentState === "RS_LAUNCH" || $currentState === "RS_BURN" || $currentState === "RS_COAST" || $currentState === "RS_RECOVERY"}
+		<div class="box1_slider">
+			<SlideToggle
+				name="box1_slider"
+				active="bg-primary-500 dark:bg-primary-500"
+				size="sm"
+				bind:checked={$box1_on}
+				on:click={handleIgnition}
+				disabled={$currentState === "RS_IGNITION" || $currentState === "RS_ABORT" || $currentState === "RS_LAUNCH" || $currentState === "RS_BURN" || $currentState === "RS_COAST" || $currentState === "RS_RECOVERY"}
+			>
+				{box1_display}
+			</SlideToggle>
+		</div>
+
+		<div class="box2_slider">
+			<SlideToggle
+				name="box2_slider"
+				active="bg-primary-500 dark:bg-primary-500"
+				size="sm"
+				bind:checked={$box2_on}
+				on:click={handleIgnition}
+				disabled={$currentState === "RS_IGNITION" || $currentState === "RS_ABORT" || $currentState === "RS_LAUNCH" || $currentState === "RS_BURN" || $currentState === "RS_COAST" || $currentState === "RS_RECOVERY"}
+			>
+				{box2_display}
+			</SlideToggle>
+		</div>
+	{/if}
 
 	<div class="nos1_tare_button">
 		<button 
