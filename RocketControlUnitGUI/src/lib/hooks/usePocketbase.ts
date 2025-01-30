@@ -187,6 +187,19 @@ export const usePocketbase = (timestamps: Timestamps, stores: Stores) => {
 
 			timestamps.heartbeat = Date.now();
 		});
+
+		// Subscribe to changes in the 'BoardStatus' collection
+		pocketbase.collection('BoardStatus').subscribe('*', function (e) {
+			stores.fcb_status.set(e.record.fcb_status);
+			stores.pbb_status.set(e.record.pbb_status);
+			stores.daq_status.set(e.record.daq_status);
+			stores.fsb_status.set(e.record.fsb_status);
+			stores.bms_status.set(e.record.bms_status);
+			stores.cib_status.set(e.record.cib_status);
+			stores.lrb_status.set(e.record.lrb_status);
+
+			timestamps.board_status = Date.now();
+		});
 	};
 
 	return {
